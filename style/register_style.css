@@ -1,0 +1,96 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+header {
+    background-color: #1a346e;
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: normal;
+}
+
+.header-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+main {
+    text-align: center;
+    padding: 40px 20px;
+    min-height: calc(100vh - 140px);
+    /* Adjust based on header/footer height */
+}
+
+main h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.register_form {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.register_form p {
+    margin-bottom: 15px;
+}
+
+.register_form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.register_form input[type="text"],
+.register_form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    /* Ensure padding doesn't affect width */
+    font-size: 1rem;
+}
+
+.register_form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #1a346e;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.register_form button:hover {
+    opacity: 0.9;
+}
+
+.register_form p:last-child,
+.register_form p:nth-last-child(2) {
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+footer {
+    display: none;
+    background-color: #fff;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+}
