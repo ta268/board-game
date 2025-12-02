@@ -17,13 +17,39 @@
         <div class="reserve_form">
             <form action="#" method="post">
                 <p><label for="">日時</label></p>
-                <p><input type="date"></p>
+                <p><input id="date" type="date" value=""></p>
                 <p><label for="">人数</label></p>
                 <p><input type="number" value="1" min="1" max="10"></p>
+                <p><label for="">ゲーム</label></p>
+                <p>
+                    <select name="" id="">
+                        <option value="">選択してください</option>
+                        <!-- データベースからゲームのタイトルを取得する-->
+                    </select>
+                </p>
                 <button>予約</button>
             </form>
-            <p>既に予約されている方はこちら</p>
-            <p><a href="login.html">ログイン</a></p>
+            <script>
+                const date = document.getElementById("date");
+                if (date) {
+                    const today = new Date();
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    const todayStr = `${yyyy}-${mm}-${dd}`;
+                    date.value = todayStr;
+
+                    date.addEventListener("change", function () {
+                        const selectedDate = new Date(this.value);
+                        const todayDate = new Date();
+                        todayDate.setHours(0, 0, 0, 0);
+                        if (selectedDate < todayDate) {
+                            alert("過去の日付は選択できません");
+                            this.value = todayStr;
+                        }
+                    });
+                }
+            </script>
         </div>
     </main>
     <footer>

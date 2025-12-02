@@ -54,7 +54,8 @@ main h1 {
 .reserve_form input[type="text"],
 .reserve_form input[type="password"],
 .reserve_form input[type="date"],
-.reserve_form input[type="number"] {
+.reserve_form input[type="number"],
+.reserve_form select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
