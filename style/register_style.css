@@ -6,7 +6,7 @@ body {
 
 header {
     background-color: #ddd6c1;
-    color: #c5c5c5;
+    color: #000;
     padding: 15px 20px;
     display: flex;
     justify-content: space-between;
@@ -20,7 +20,7 @@ header h1 {
 }
 
 .header-link {
-    color: #c5c5c5;
+    color: #fff;
     text-decoration: none;
     font-size: 0.9rem;
 }
