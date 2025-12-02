@@ -4,7 +4,7 @@ body {
 }
 
 header {
-    background-color: #1a346e;
+    background-color: #ddd6c1;
     color: #fff;
     padding: 15px 20px;
     display: flex;
@@ -66,7 +66,7 @@ main h1 {
 .register_form button {
     width: 100%;
     padding: 12px;
-    background-color: #1a346e;
+    background-color: #ddd73c;
     color: #fff;
     border: none;
     border-radius: 4px;
