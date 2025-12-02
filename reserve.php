@@ -1,3 +1,7 @@
+<?php
+    //未ログイン時にログイン画面に遷移
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -24,7 +28,9 @@
                 <p>
                     <select name="" id="">
                         <option value="">選択してください</option>
-                        <!-- データベースからゲームのタイトルを取得する-->
+                        <?php
+                            //データベースからゲームのタイトルを取得する
+                        ?>
                     </select>
                 </p>
                 <button>予約</button>
