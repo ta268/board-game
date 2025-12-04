@@ -59,10 +59,16 @@ main h1 {
 .reserve_form select {
     width: 100%;
     padding: 10px;
+    margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 1rem;
+}
+
+.game_name {
+    background-color: #dadada;
+    cursor: not-allowed;
 }
 
 .reserve_form button {

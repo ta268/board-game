@@ -20,12 +20,9 @@
         <h1>予約</h1>
         <div class="reserve_form">
             <form action="#" method="post">
-                <p><label for="">日時</label></p>
-                <p><input id="date" type="date" value=""></p>
-                <p><label for="">人数</label></p>
-                <p><input type="number" value="1" min="1" max="10"></p>
-                <p><label for="">ゲーム</label></p>
-                <p><input type="text" value="<?php echo 'HelloWorld'; //ゲームのタイトルを表示する ?>" readonly></p>
+                <p><label>日時<br><input id="date" type="date" value=""></label></p>
+                <p><label>人数<br><input type="number" value="1" min="1" max="10"></label></p>
+                <p><label>ゲーム<br><input class="game_name" type="text" value="<?php echo 'HelloWorld'; //ゲームのタイトルを表示する ?>" readonly></label></p>
                 <button>予約</button>
             </form>
             <script>
