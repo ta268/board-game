@@ -25,14 +25,7 @@
                 <p><label for="">人数</label></p>
                 <p><input type="number" value="1" min="1" max="10"></p>
                 <p><label for="">ゲーム</label></p>
-                <p>
-                    <select name="" id="">
-                        <option value="">選択してください</option>
-                        <?php
-                            //データベースからゲームのタイトルを取得する
-                        ?>
-                    </select>
-                </p>
+                <p><input type="text" value="<?php echo 'HelloWorld'; //ゲームのタイトルを表示する ?>" readonly></p>
                 <button>予約</button>
             </form>
             <script>
