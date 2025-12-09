@@ -15,7 +15,7 @@
         <div class="container header-container">
             <div class="logo">
                 <img src="images/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                <div class="logo-text" style="display:none;">🎲 管理画面</div>
+                <div class="logo-text" style="display:none;">管理画面</div>
             </div>
             <nav class="nav">
                 <a href="home.php" class="nav-link">ホームに戻る</a>
@@ -36,32 +36,17 @@
             <!-- タブコンテンツ: 新着順 -->
             <div id="tab-newest" class="tab-content active">
                 <div class="review-list">
-                    <!-- 見本 1 -->
+                    <!-- 見本  -->
                     <div class="review-card">
                         <div class="review-header">
-                            <span class="game-title">カタン</span>
-                            <span class="review-date">2024/04/15 14:30</span>
+                            <span class="game-title"><?php //タイトル表示 ?></span>
+                            <span class="review-date"><?php //日付表示 ?></span>
                         </div>
                         <div class="review-meta">
-                            <span class="reviewer-name">田中 太郎</span>
-                            <span class="rating">★★★★★</span>
+                            <span class="reviewer-name"><?php //名前表示 ?></span>
+                            <span class="rating"><?php //評価表示 ?></span>
                         </div>
-                        <p class="review-comment">初めてやりましたが、とても楽しかったです！交渉が熱い。</p>
-                        <div class="review-actions">
-                            <button class="btn-delete">削除</button>
-                        </div>
-                    </div>
-                    <!-- 見本 2 -->
-                    <div class="review-card">
-                        <div class="review-header">
-                            <span class="game-title">ドミニオン</span>
-                            <span class="review-date">2024/04/14 10:15</span>
-                        </div>
-                        <div class="review-meta">
-                            <span class="reviewer-name">鈴木 花子</span>
-                            <span class="rating">★★★★☆</span>
-                        </div>
-                        <p class="review-comment">デッキ構築が楽しい。種類が多くて飽きない。</p>
+                        <p class="review-comment"><?php //コメント表示 ?></p>
                         <div class="review-actions">
                             <button class="btn-delete">削除</button>
                         </div>
@@ -87,14 +72,14 @@
                     
                     <div class="review-card">
                         <div class="review-header">
-                            <span class="game-title">カタン</span>
-                            <span class="review-date">2024/04/01 09:00</span>
+                            <span class="game-title"><?php //タイトル表示 ?></span>
+                            <span class="review-date"><?php //日付表示 ?></span>
                         </div>
                         <div class="review-meta">
-                            <span class="reviewer-name">佐藤 次郎</span>
-                            <span class="rating">★★★☆☆</span>
+                            <span class="reviewer-name"><?php //名前表示 ?></span>
+                            <span class="rating"><?php //評価表示 ?></span>
                         </div>
-                        <p class="review-comment">運要素が強いけど、そこが良い。</p>
+                        <p class="review-comment"><?php //コメント表示 ?></p>
                         <div class="review-actions">
                             <button class="btn-delete">削除</button>
                         </div>
