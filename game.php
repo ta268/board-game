@@ -1,3 +1,4 @@
+<?php
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -95,7 +96,7 @@
     <!-- games-data.js：ゲーム情報のデータファイル -->
     <!-- game.js：ゲーム一覧を描画するロジック -->
     <script src="games-data.js"></script>
-    <script src="game.js"></script>
+    <script src="script/game.js"></script>
 </body>
 
 </html>
