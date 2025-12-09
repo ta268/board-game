@@ -7,7 +7,7 @@
     <title>ゲーム一覧 - Board Game Cafe</title>
 
     <!-- 外部CSS読み込み -->
-    <link rel="stylesheet" href="game.css">
+    <link rel="stylesheet" href="style/game.css">
 
     <!-- Googleフォント（Noto Sans JP） -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,8 +32,8 @@
             <!-- ナビゲーション -->
             <nav class="nav">
                 <!-- 現在ページは active -->
-                <a href="index.html" class="nav-link">ホーム</a>
-                <a href="#" class="nav-link active">ゲーム</a>
+                <a href="home.php" class="nav-link">ホーム</a>
+                <a href="game.php" class="nav-link active">ゲーム</a>
                 <a href="#" class="nav-link">レビュー</a>
                 <a href="#" class="nav-link">予約管理</a>
             </nav>
