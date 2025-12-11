@@ -1,46 +1,36 @@
 :root {
-    --primary-color: #1a2b4b;
-    /* 濃いネイビー（メインカラー） */
-    --accent-color: #d4a373;
-    /* ウッド系アクセント */
+    --primary-color: #1a2b4b; /* Dark Navy */
+    --accent-color: #d4a373; /* Wood/Gold tone */
     --text-color: #333;
-    /* 基本文字色 */
     --bg-color: #f9f9f9;
-    /* 背景色 */
     --white: #ffffff;
     --gray-light: #f4f4f4;
 }
 
 * {
     box-sizing: border-box;
-    /* 余白計算を安定させる */
     margin: 0;
     padding: 0;
 }
 
 body {
     font-family: 'Noto Sans JP', sans-serif;
-    /* 日本語フォント */
     background-color: var(--bg-color);
-    /* 背景色 */
     color: var(--text-color);
     line-height: 1.6;
-    /* 読みやすさ向上 */
 }
 
 .container {
     max-width: 960px;
-    /* 中央寄せ */
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* ========= Header ========= */
+/* Header */
 .header {
-    background-color: var(--white);
+    background-color: #e0d5c1;
     padding: 20px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    /* 少し影 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .header-container {
@@ -65,7 +55,6 @@ body {
 .nav {
     display: flex;
     gap: 30px;
-    /* ナビ間の距離 */
 }
 
 .nav-link {
@@ -81,11 +70,10 @@ body {
     font-size: 0.9rem;
 }
 
-/* ========= Hero ========= */
+/* Hero */
 .hero {
     position: relative;
     height: 400px;
-    /* 高さ固定 */
     background-image: url('images/hero-bg.png');
     background-size: cover;
     background-position: center;
@@ -95,22 +83,23 @@ body {
     color: var(--white);
     text-align: center;
     overflow: hidden;
-    /* カードがはみ出さないように */
 }
 
-/* 画像が読み込めない場合の黒フィルター */
+/* Fallback if image fails */
 .hero::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4); /* Dark overlay */
     z-index: 1;
 }
 
 .hero-content {
     position: relative;
     z-index: 2;
-    /* オーバーレイより前へ */
     width: 100%;
     max-width: 800px;
 }
@@ -119,8 +108,7 @@ body {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 40px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    /* タイトルの影 */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .cta-button {
@@ -132,19 +120,18 @@ body {
     border-radius: 4px;
     font-weight: 700;
     font-size: 0.9rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     transition: transform 0.2s;
 }
 
 .cta-button:hover {
     transform: translateY(-2px);
-    /* ちょい浮く */
 }
 
-/* ========= Hero 装飾カード ========= */
+/* Hero Floating Cards (Decorative) */
 .hero-stats-overlay {
     position: relative;
-    height: 100px;
+    height: 100px; /* Space for absolute positioning */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -152,14 +139,13 @@ body {
 }
 
 .hero-stat-card {
-    background: #e0d5c1;
-    /* ダンボール風 */
+    background: #e0d5c1; /* Cardboard-ish color */
     color: #333;
     padding: 15px;
     border-radius: 4px;
     width: 140px;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -176,7 +162,6 @@ body {
     margin-top: 5px;
 }
 
-/* カード角度の演出 */
 .rotate-left {
     transform: rotate(-5deg);
     left: 10%;
@@ -195,14 +180,15 @@ body {
     top: 20px;
 }
 
-/* スマホでは非表示 */
+/* Hide the decorative cards on mobile or adjust layout */
 @media (max-width: 768px) {
     .hero-stat-card {
         display: none;
     }
 }
 
-/* ========= Stats Section ========= */
+
+/* Stats Section */
 .stats-section {
     padding: 40px 0;
 }
@@ -232,7 +218,7 @@ body {
     color: var(--primary-color);
 }
 
-/* ========= New Games ========= */
+/* New Games */
 .new-games {
     padding: 40px 0;
 }
@@ -267,7 +253,6 @@ body {
 
 .game-card:hover img {
     transform: scale(1.05);
-    /* ホバーで拡大 */
 }
 
 .more-btn-container {
@@ -290,7 +275,7 @@ body {
     color: #333;
 }
 
-/* ========= News ========= */
+/* News */
 .news {
     padding: 40px 0 60px;
     border-bottom: 1px solid #eee;
@@ -306,7 +291,7 @@ body {
     color: #888;
 }
 
-/* ========= Footer ========= */
+/* Footer */
 .footer {
     padding: 40px 0;
     background-color: var(--white);
@@ -324,4 +309,27 @@ body {
 
 .footer-right {
     text-align: right;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .footer-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .footer-right {
+        text-align: left;
+    }
 }
