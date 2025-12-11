@@ -136,10 +136,8 @@
             // 過去の予約: 日付が近い順 (降順 = 新しい順)
             filtered.sort((a, b) => {
                 if (currentTab === 'future') {
-                    if (a.date === b.date) return a.time.localeCompare(b.time); // 同日は時間順
                     return a.date.localeCompare(b.date);
                 } else {
-                    if (a.date === b.date) return b.time.localeCompare(a.time); // 同日は時間遅い順(任意)
                     return b.date.localeCompare(a.date);
                 }
             });
@@ -159,9 +157,7 @@
 
                     tr.innerHTML = `
                         <td>${dateDisplay}</td>
-                        <td>${r.time}</td>
                         <td>${r.name}</td>
-                        <td>${r.count}名</td>
                         <td>${r.game}</td>
                     `;
                     listBody.appendChild(tr);
