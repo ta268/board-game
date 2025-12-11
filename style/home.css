@@ -1,6 +1,8 @@
 :root {
-    --primary-color: #1a2b4b; /* Dark Navy */
-    --accent-color: #d4a373; /* Wood/Gold tone */
+    --primary-color: #1a2b4b;
+    /* Dark Navy */
+    --accent-color: #d4a373;
+    /* Wood/Gold tone */
     --text-color: #333;
     --bg-color: #f9f9f9;
     --white: #ffffff;
@@ -30,7 +32,7 @@ body {
 .header {
     background-color: #e0d5c1;
     padding: 20px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .header-container {
@@ -74,9 +76,7 @@ body {
 .hero {
     position: relative;
     height: 400px;
-    background-image: url('images/hero-bg.png');
-    background-size: cover;
-    background-position: center;
+    /* 高さ固定 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,15 +85,25 @@ body {
     overflow: hidden;
 }
 
-/* Fallback if image fails */
+/* 背景画像（ぼかし用） */
 .hero::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4); /* Dark overlay */
+    inset: -20px;
+    /* ぼかしの端が見切れないように少し広げる */
+    background-image: url('../img/bg_image1.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    z-index: 0;
+}
+
+/* 黒フィルター */
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
     z-index: 1;
 }
 
@@ -108,7 +118,7 @@ body {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 40px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .cta-button {
@@ -120,7 +130,7 @@ body {
     border-radius: 4px;
     font-weight: 700;
     font-size: 0.9rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s;
 }
 
@@ -131,7 +141,8 @@ body {
 /* Hero Floating Cards (Decorative) */
 .hero-stats-overlay {
     position: relative;
-    height: 100px; /* Space for absolute positioning */
+    height: 100px;
+    /* Space for absolute positioning */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -139,13 +150,14 @@ body {
 }
 
 .hero-stat-card {
-    background: #e0d5c1; /* Cardboard-ish color */
+    background: #e0d5c1;
+    /* Cardboard-ish color */
     color: #333;
     padding: 15px;
     border-radius: 4px;
     width: 140px;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -319,16 +331,16 @@ body {
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .games-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .footer-container {
         flex-direction: column;
         gap: 20px;
     }
-    
+
     .footer-right {
         text-align: left;
     }
