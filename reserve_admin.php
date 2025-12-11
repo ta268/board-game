@@ -18,7 +18,7 @@
                 <div class="logo-text" style="display:none;">管理画面</div>
             </div>
             <nav class="nav">
-                <a href="home.php" class="nav-link">ホームに戻る</a>
+                <a href="home.html" class="nav-link">ホームに戻る</a>
             </nav>
         </div>
     </header>
