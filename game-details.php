@@ -36,10 +36,9 @@
                 </a>
             </div>
 
-            <!-- ナビ（ゲーム一覧、レビュー、予約管理） -->
+            <!-- ナビ（ゲーム一覧、貸出予約） -->
             <nav class="nav">
                 <a href="game.php" class="nav-link">ゲーム一覧</a>
-                <a href="#" class="nav-link">レビュー</a>
                 <a href="reserve.php" class="nav-link">貸出予約</a>
             </nav>
 
