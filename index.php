@@ -3,6 +3,7 @@
 ?>
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <!-- ページの文字コード設定 -->
@@ -36,7 +37,7 @@
                 <a href="game.php" class="nav-link active">ゲーム</a>
                 <a href="reserve.php" class="nav-link">貸し出し予約</a>
             </nav>
-            
+
 
             <a href="#" class="login-btn">ログイン</a> <!-- ログインボタン -->
         </div>
@@ -101,7 +102,7 @@
 
                 <!-- もっと見るボタン -->
                 <div class="more-btn-container">
-                    <button class="more-btn">もっと見る</button>
+                    <a href="game.php" class="more-btn">もっと見る</a>
                 </div>
             </div>
         </section>
@@ -137,4 +138,5 @@
     <script src="script/games-data.js"></script>
     <script src="script/app.js"></script>
 </body>
+
 </html>

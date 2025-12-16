@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const placeholder = 'https://placehold.co/300x200?text=' + encodeURIComponent(game.title);
 
                 card.innerHTML = `
-                    <a href="game-details.html?id=${game.id}">
+                    <a href="game-details.php?id=${game.id}">
                         <img src="${imgSrc}" alt="${game.title}" 
                              onerror="this.src='${placeholder}'">
                     </a>
@@ -42,13 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Simple interaction for the "More" button
-    const moreBtn = document.querySelector('.more-btn');
-    if (moreBtn) {
-        moreBtn.addEventListener('click', () => {
-            // Redirect to full game list
-            window.location.href = 'game.html';
-        });
-    }
+    // const moreBtn = document.querySelector('.more-btn');
+    // if (moreBtn) {
+    //     moreBtn.addEventListener('click', () => {
+    //         // Redirect to full game list
+    //         window.location.href = 'game.html';
+    //     });
+    // }
 
     // Smooth scroll for anchor links (if any)
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
