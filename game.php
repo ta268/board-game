@@ -1,3 +1,6 @@
+<?php
+    //未ログイン時にログイン画面に遷移
+?>
 <!DOCTYPE html>
 <html lang="ja">
 
