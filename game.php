@@ -27,7 +27,7 @@
                 <a href="index.php" class="nav-link">ホーム</a>
                 <a href="reserve.php" class="nav-link">貸し出し予約</a>
             </nav>
-            <a href="#" class="login-btn">ログイン</a>
+            <a href="login.php" class="login-btn">ログイン</a>
         </div>
     </header>
 

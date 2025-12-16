@@ -38,7 +38,7 @@
             </nav>
             
 
-            <a href="#" class="login-btn">ログイン</a> <!-- ログインボタン -->
+            <a href="login.php" class="login-btn">ログイン</a> <!-- ログインボタン -->
         </div>
     </header>
 
