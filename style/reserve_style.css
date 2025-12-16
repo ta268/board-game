@@ -13,10 +13,11 @@ header {
     align-items: center;
 }
 
-header h1 {
+header a h1 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
+    text-decoration: none;
 }
 
 .header-link {
