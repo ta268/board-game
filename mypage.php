@@ -27,7 +27,7 @@
             <nav class="nav">
                 <a href="index.php" class="nav-link">ホーム</a>
                 <a href="game.php" class="nav-link">ゲーム一覧</a>
-                <a href="reserve.php" class="nav-link">貸し出し予約</a>
+                <a href="reservation_status.php" class="nav-link">予約状況</a>
             </nav>
             <!-- ログアウトリンク（後で実装） -->
             <a href="index.php" class="login-btn">ログアウト</a>
@@ -52,8 +52,8 @@
                     <div class="profile-label">メールアドレス</div>
                     <div class="profile-value">yamada@example.com</div>
 
-                    <div class="profile-label">年齢</div>
-                    <div class="profile-value">25歳</div>
+                    <div class="profile-label">生年月日</div>
+                    <div class="profile-value">2000-01-01</div>
                 </div>
             </div>
 
