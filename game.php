@@ -1,5 +1,5 @@
 <?php
-    //未ログイン時にログイン画面に遷移
+//未ログイン時にログイン画面に遷移
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -24,8 +24,8 @@
                 <span class="logo-label">ゲーム一覧</span>
             </div>
             <nav class="nav">
-                <a href="index.html" class="nav-link">ホーム</a>
-                <a href="reserve.html" class="nav-link">貸し出し予約</a>
+                <a href="index.php" class="nav-link">ホーム</a>
+                <a href="reserve.php" class="nav-link">貸し出し予約</a>
             </nav>
             <a href="#" class="login-btn">ログイン</a>
         </div>

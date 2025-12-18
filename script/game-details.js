@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Game Not Found
         const container = document.querySelector('.game-details-card');
         if (container) {
-            container.innerHTML = '<h2>ゲームが見つかりませんでした</h2><a href="game.html">一覧に戻る</a>';
+            container.innerHTML = '<h2>ゲームが見つかりませんでした</h2><a href="game.php">一覧に戻る</a>';
         }
     }
 });

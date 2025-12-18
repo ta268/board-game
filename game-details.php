@@ -20,7 +20,7 @@
     <header class="header">
         <div class="container header-container">
             <div class="logo">
-                <a href="index.html"
+                <a href="index.php"
                     style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
                     <img src="images/logo.png" alt="Logo" class="logo-img"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
@@ -69,8 +69,8 @@
 
             <div class="reviews-section">
                 <div class="tabs">
-                    <a href="index.html" class="tab">ホーム</a>
-                    <a href="game.html" class="tab">ゲーム一覧</a>
+                    <a href="index.php" class="tab">ホーム</a>
+                    <a href="game.php" class="tab">ゲーム一覧</a>
                     <a href="#" class="tab active">レビュー</a>
                 </div>
 
