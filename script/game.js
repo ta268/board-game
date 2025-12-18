@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const placeholderSrc = 'images/placeholder.svg';
 
             card.innerHTML = `
-                <a href="game-details.html?id=${game.id}" style="display: contents;">
+                <a href="game-details.php?id=${game.id}" style="display: contents;">
                     <img src="${imgSrc}" alt="${game.title}" class="game-list-img"
                          onerror="this.src='${placeholderSrc}'; this.onerror=null;">
                 </a>
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="game-list-title">${game.title}</h3>
                         <div class="game-rating">${getStarRating(game.rating)}</div>
                     </div>
-                    <a href="game-details.html?id=${game.id}" class="game-details-btn">詳細を見る</a>
+                    <a href="game-details.php?id=${game.id}" class="game-details-btn">詳細を見る</a>
                 </div>
             `;
             gameListContainer.appendChild(card);
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const moreBtn = document.querySelector('.more-btn');
     if (moreBtn) {
         moreBtn.addEventListener('click', () => {
-            window.location.href = 'games.html';
+            window.location.href = 'game.php';
         });
     }
 
