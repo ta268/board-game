@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>会員登録 - Board Game Cafe</title>
+    <title>アカウント情報変更 - Board Game Cafe</title>
     <link rel="stylesheet" href="style/register_style.css">
 </head>
 
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="index.php"><h1>ボードゲームカフェ</h1></a>
     </header>
     <main>
-        <h1>会員登録</h1>
+        <h1>アカウント情報変更</h1>
 
 <!-- エラーメッセージ表示 -->
 <?php if ($error !== ''): ?>
@@ -83,22 +83,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><label for="nickname">ニックネーム</label></p>
                 <p><input type="text" name="nickname" id="nickname"></p>
 
-    <p><label for="email">メールアドレス</label></p>
-    <p><input type="text" name="email" id="email"></p>
+                <p><label for="email">メールアドレス</label></p>
+                <p><input type="text" name="email" id="email"></p>
 
-    <p><label for="password">パスワード</label></p>
-    <p><input type="password" name="password" id="password"></p>
+                <p><label for="birthday">生年月日</label></p>
+                <p><input type="date" name="birthday" id="birthday"></p>
 
-    <p><label for="password_confirm">パスワード確認</label></p>
-    <p><input type="password" name="password_confirm" id="password_confirm"></p>
-
-    <p><label for="birthday">生年月日</label></p>
-    <p><input type="date" name="birthday" id="birthday"></p>
-
-    <button type="submit">会員登録</button>
-</form>
-            <p>既に会員登録されている方はこちら</p>
-            <p><a href="login.php">ログイン</a></p>
+                <button type="submit">変更する</button>
+            </form>
         </div>
     </main>
     <footer>

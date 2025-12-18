@@ -15,6 +15,11 @@
     border-bottom: 2px solid #eee;
 }
 
+.title-section a {
+    text-decoration: none;
+    color: brown;
+}
+
 .section-title {
     font-size: 1.5rem;
     font-weight: 700;
