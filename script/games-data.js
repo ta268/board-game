@@ -130,5 +130,29 @@ const gamesData = [
         players: '2〜8人',
         playtime: '15分〜',
         age: '10歳以上'
+    },
+    {
+        id: 12,
+        title: 'ダンガンロンパ 絶望のラブレター',
+        image: 'img/danganronpa_love_letter.jpg',
+        rating: 4.8,
+        available: true,
+        genre: 'strategy',
+        description: '人気ゲーム「ラブレター」が「ダンガンロンパ」の世界観で登場！希望の学園で繰り広げられる、絶望と希望の心理戦カードゲーム。',
+        players: '2〜4人',
+        playtime: '5〜10分',
+        age: '12歳以上'
+    },
+    {
+        id: 13,
+        title: '人生ゲーム ダイナミックドリーム',
+        image: 'img/jinsei_game_dd.jpg',
+        rating: 4.7,
+        available: true,
+        genre: 'party',
+        description: '盤面サイズ1.5倍！豪快でダイナミックな人生を楽しめる、人生ゲームの超デラックス版。マウンテンコースなど、夢のような人生をみんなで体験しよう！',
+        players: '2〜6人',
+        playtime: '60分〜',
+        age: '6歳以上'
     }
 ];

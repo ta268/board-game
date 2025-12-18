@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const moreBtn = document.querySelector('.more-btn');
     if (moreBtn) {
         moreBtn.addEventListener('click', () => {
-            window.location.href = 'games.html';
+            window.location.href = 'game.php';
         });
     }
 
