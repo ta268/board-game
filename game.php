@@ -27,7 +27,14 @@
                 <a href="index.php" class="nav-link">ホーム</a>
                 <a href="reserve.php" class="nav-link">貸し出し予約</a>
             </nav>
-            <a href="login.php" class="login-btn">ログイン</a>
+            
+            <?php 
+                echo '<a href="" class="login-btn"></a>';
+                /*ログインの有無で表示を切り替える
+                    未ログイン->ログイン(login.phpへ)
+                    ログイン->ユーザー名(mypage.phpへ)
+                */
+            ?>
         </div>
     </header>
 
