@@ -13,10 +13,15 @@ header {
     align-items: center;
 }
 
-header h1 {
+header a h1 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
+}
+
+header a {
+    text-decoration: none;
+    color: #fff;
 }
 
 .header-link {

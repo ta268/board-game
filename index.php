@@ -1,10 +1,16 @@
+<?php
+//後に追加
+?>
 <!DOCTYPE html>
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8"> <!-- ページの文字コード設定 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- スマホ対応 -->
-    <title>Board Game Cafe</title> <!-- タイトル -->
+    <meta charset="UTF-8">
+    <!-- ページの文字コード設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- スマホ対応 -->
+    <title>Board Game Cafe</title>
+    <!-- タイトル -->
 
     <!-- 外部CSS読み込み -->
     <link rel="stylesheet" href="style/home.css">
@@ -29,11 +35,17 @@
             <!-- ナビゲーションメニュー -->
             <nav class="nav">
                 <a href="game.php" class="nav-link">ゲーム</a>
-                <a href="#" class="nav-link">レビュー</a>
-                <a href="reserve.php" class="nav-link">予約管理</a>
+                <a href="reservation_status.php" class="nav-link">予約状況</a>
             </nav>
-
-            <a href="login.php" class="login-btn">ログイン</a> <!-- ログインボタン -->
+            
+            <?php 
+                echo '<a href="" class="login-btn"></a>';
+                /*ログインの有無で表示を切り替える
+                    未ログイン->ログイン(login.phpへ)
+                    ログイン->ユーザー名(mypage.phpへ)
+                */
+            ?>
+            
         </div>
     </header>
 
@@ -50,7 +62,7 @@
                         <span class="stat-label">貸出可能なゲーム</span>
                     </div>
 
-                    <a href="#" class="cta-button">ゲーム一覧を見る</a> <!-- CTAボタン -->
+                    <a href="game.php" class="cta-button">ゲーム一覧を見る</a> <!-- CTAボタン -->
 
                     <div class="hero-stat-card rotate-right">
                         <span class="stat-number">5</span> <!-- 予約数 -->
@@ -88,21 +100,15 @@
             <div class="container">
                 <h2 class="section-title">新着ゲーム</h2>
 
-                <!-- ゲーム画像4つ。エラー時はプレースホルダー -->
-                <div class="games-grid">
-                    <div class="game-card"><img src="images/game-1.png" alt="Game 1"
-                            onerror="this.src='https://placehold.co/300x200?text=Game+1'"></div>
-                    <div class="game-card"><img src="images/game-2.png" alt="Game 2"
-                            onerror="this.src='https://placehold.co/300x200?text=Game+2'"></div>
-                    <div class="game-card"><img src="images/game-3.png" alt="Game 3"
-                            onerror="this.src='https://placehold.co/300x200?text=Game+3'"></div>
-                    <div class="game-card"><img src="images/game-4.png" alt="Game 4"
-                            onerror="this.src='https://placehold.co/300x200?text=Game+4'"></div>
+                <!-- ゲーム画像（JSで動的生成） -->
+                <div class="games-grid" id="new-games-list">
+                    <!-- ここにJSでゲーム画像が挿入されます -->
+                    <p style="grid-column: 1/-1; text-align: center;">読み込み中...</p>
                 </div>
 
                 <!-- もっと見るボタン -->
                 <div class="more-btn-container">
-                    <button class="more-btn">もっと見る</button>
+                    <a href="game.php" class="more-btn">もっと見る</a>
                 </div>
             </div>
         </section>
@@ -128,13 +134,14 @@
                 <p class="footer-label">住所</p>
             </div>
             <div class="footer-right">
-                <p>住所：東京都新宿区新宿 1-1-1</p> <!-- 店舗住所 -->
-                <p>営業時間：10:00〜20:00</p> <!-- 営業時間 -->
+                <p>住所：東京都新宿区新宿 1-1-1</p>
+                <p>営業時間：10:00〜20:00</p>
             </div>
         </div>
     </footer>
 
     <!-- JavaScript読み込み -->
+    <script src="script/games-data.js"></script>
     <script src="script/app.js"></script>
 </body>
 

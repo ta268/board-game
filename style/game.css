@@ -32,7 +32,7 @@ body {
 .header {
     background-color: #e0d5c1;
     padding: 20px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .header-container {
@@ -76,7 +76,7 @@ body {
 .hero {
     position: relative;
     height: 400px;
-    background-image: url('images/hero-bg.png');
+    background-image: url('img/hero-bg.png');
     background-size: cover;
     background-position: center;
     display: flex;

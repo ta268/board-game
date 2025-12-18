@@ -1,0 +1,110 @@
+/* mypage_style.css */
+
+/* プロフィールセクション */
+.profile-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.title-section {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #eee;
+}
+
+.title-section a {
+    text-decoration: none;
+    color: brown;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    color: #333;
+}
+
+.profile-info {
+    padding-top: 20px;
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+.profile-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.profile-value {
+    color: #333;
+    font-size: 1.1rem;
+}
+
+/* 予約状況セクション */
+.reservation-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.reservation-table th,
+.reservation-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.reservation-table th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+    color: #555;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.status-reserved {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-returned {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+main {
+    margin-bottom: 30px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+    .profile-info {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .reservation-table th,
+    .reservation-table td {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+}

@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email']    = $user['email'];
 
                 // ログイン後に飛ばすページ（home.php や index.php などに合わせて）
-                header('Location: home.php');
+                header('Location: index.php');
                 exit;
             } else {
                  // ログイン失敗
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <header>
-        <h1>ボードゲームカフェ</h1>
+        <a href="index.php"><h1>ボードゲームカフェ</h1></a>
         <nav>
             <a class="header-link" href="register.php">会員登録</a>
         </nav>
