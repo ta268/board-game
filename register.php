@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindValue(':name', $nickname, PDO::PARAM_STR);
             $stmt->bindValue(':email', $email, PDO::PARAM_STR);
             $stmt->bindValue(':password', $hashed, PDO::PARAM_STR);
-            $stmt->bindValue(':age', $age, PDO::PARAM_INT);
+            $stmt->bindValue(':age', $age, PDO::PARAM_INT); //要修正(年齢->生年月日)
             $stmt->execute();
 
             // 6. 登録完了 → ログイン画面へ
@@ -83,20 +83,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><label for="nickname">ニックネーム</label></p>
                 <p><input type="text" name="nickname" id="nickname"></p>
 
-    <p><label for="email">メールアドレス</label></p>
-    <p><input type="text" name="email" id="email"></p>
+                <p><label for="email">メールアドレス</label></p>
+                <p><input type="text" name="email" id="email"></p>
 
-    <p><label for="password">パスワード</label></p>
-    <p><input type="password" name="password" id="password"></p>
+                <p><label for="password">パスワード</label></p>
+                <p><input type="password" name="password" id="password"></p>
 
-    <p><label for="password_confirm">パスワード確認</label></p>
-    <p><input type="password" name="password_confirm" id="password_confirm"></p>
+                <p><label for="password_confirm">パスワード確認</label></p>
+                <p><input type="password" name="password_confirm" id="password_confirm"></p>
 
-    <p><label for="birthday">生年月日</label></p>
-    <p><input type="date" name="birthday" id="birthday"></p>
+                <p><label for="birthday">生年月日</label></p>
+                <p><input type="date" name="birthday" id="birthday" value="2000-01-01"></p>
 
-    <button type="submit">会員登録</button>
-</form>
+                <button type="submit">会員登録</button>
+            </form>
             <p>既に会員登録されている方はこちら</p>
             <p><a href="login.php">ログイン</a></p>
         </div>
