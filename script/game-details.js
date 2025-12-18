@@ -59,11 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 <li>・対象年齢: ${game.age}</li>
             `;
         }
+
+        // Reserve Button Action
+        const reserveBtn = document.querySelector('.reserve-btn');
+        if (reserveBtn) {
+            reserveBtn.addEventListener('click', () => {
+                const url = `reserve.php?title=${encodeURIComponent(game.title)}`;
+                window.location.href = url;
+            });
+        }
     } else {
         // Game Not Found
         const container = document.querySelector('.game-details-card');
         if (container) {
-            container.innerHTML = '<h2>ゲームが見つかりませんでした</h2><a href="game.html">一覧に戻る</a>';
+            container.innerHTML = '<h2>ゲームが見つかりませんでした</h2><a href="game.php">一覧に戻る</a>';
         }
     }
 });

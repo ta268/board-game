@@ -1,5 +1,5 @@
 <?php
-    //未ログイン時にログイン画面に遷移
+//未ログイン時にログイン画面に遷移
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +22,9 @@
             <form action="#" method="post">
                 <p><label>日時<br><input id="date" type="date" value=""></label></p>
                 <p><label>人数<br><input type="number" value="1" min="1" max="10"></label></p>
-                <p><label>ゲーム<br><input class="game_name" type="text" value="<?php echo 'HelloWorld'; //ゲームのタイトルを表示する ?>" readonly></label></p>
+                <p><label>ゲーム<br><input class="game_name" type="text"
+                            value="<?php echo htmlspecialchars($_GET['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                            readonly></label></p>
                 <button>予約</button>
             </form>
             <script>
