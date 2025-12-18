@@ -46,7 +46,10 @@
 
             <!-- アカウント情報セクション（モック） -->
             <div class="profile-section">
-                <h2 class="section-title">アカウント情報</h2>
+                <div class="title-section">
+                    <h2 class="section-title">アカウント情報</h2>
+                    <p>編集</p>
+                </div>
                 <div class="profile-info">
                     <div class="profile-label">お名前</div>
                     <div class="profile-value">山田 太郎</div>
