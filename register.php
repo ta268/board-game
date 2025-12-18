@@ -44,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindValue(':email', $email, PDO::PARAM_STR);
             $stmt->bindValue(':password', $hashed, PDO::PARAM_STR);
             $stmt->bindValue(':age', $age, PDO::PARAM_INT); //要修正(年齢->生年月日)
+            //日付は YYYY-MM-DD の形式でformから渡されるみたいです
+            
             $stmt->execute();
 
             // 6. 登録完了 → ログイン画面へ
