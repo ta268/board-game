@@ -1,6 +1,8 @@
 
 <?php
-require_once 'db_connect.php';  // DB接続
+
+require_once __DIR__ . '/init.php'; // session_start + db_connect
+
 
 $error = '';
 
