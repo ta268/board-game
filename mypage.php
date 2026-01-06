@@ -1,5 +1,44 @@
 <?php
-    require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/init.php';
+
+// ログインチェック
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$userId = (int)$_SESSION['user_id'];
+$user = null;
+$reservations = [];
+
+try {
+    // ユーザー情報取得
+    $stmt = $pdo->prepare('SELECT name, email, age FROM users WHERE id = :id');
+    $stmt->execute([':id' => $userId]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        // ユーザーが存在しない場合（削除等）
+        session_destroy();
+        header('Location: login.php');
+        exit;
+    }
+
+    // 予約情報取得
+    $stmt = $pdo->prepare('
+        SELECT r.id, r.reservation_date, r.party_size, r.status, g.title AS game_title 
+        FROM reservations r
+        JOIN games g ON r.game_id = g.id
+        WHERE r.user_id = :uid
+        ORDER BY r.reservation_date DESC
+    ');
+    $stmt->execute([':uid' => $userId]);
+    $reservations = $stmt->fetchAll();
+
+} catch (PDOException $e) {
+    echo 'エラーが発生しました。';
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
