@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/init.php';
 /* PHPブロックがあるが、ここでは特に処理していない（必要なら後で追加） */
 ?>
 
@@ -30,6 +31,10 @@
             <nav class="nav">
                 <a href="index.php" class="nav-link">ホーム</a>
                 <a href="reserve.php" class="nav-link">貸し出し予約</a>
+                <?php if (isset($_SESSION['is_admin']) && (int)$_SESSION['is_admin'] === 1): ?>
+                    <a href="reserve_admin.php" class="nav-link">管理(予約)</a>
+                    <a href="review_admin.php" class="nav-link">管理(レビュー)</a>
+                <?php endif; ?>
             </nav>
             <a href="#" class="login-btn">ログイン</a>
         </div>

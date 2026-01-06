@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_email']    = $user['email'];
                 $_SESSION['is_admin']   = (int)$user['is_admin'];// ★追加（0 or 1）
 
+
                 // ログイン後に飛ばすページ（home.php や index.php などに合わせて）
                 header('Location: index.php');
                 exit;

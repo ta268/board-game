@@ -1,10 +1,6 @@
 <?php
 require_once __DIR__ . '/admin_check.php';
-
-var_dump($_SESSION);
-exit;
 ?>
-
 
 <!DOCTYPE html>
 <html lang="ja">
