@@ -1,31 +1,110 @@
 <?php
-    //未ログイン時にログイン画面に遷移
 require_once __DIR__ . '/auth_check.php';
 
+$errors  = [];
+$success = '';
+
+// 予約登録処理
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $userId    = (int)($_SESSION['user_id'] ?? 0);
+    $gameId    = (int)($_POST['game_id'] ?? 0);
+    $dateInput = trim($_POST['date'] ?? '');
+    $partySize = (int)($_POST['party_size'] ?? 1);
+
+    // 入力チェック
+    if ($gameId <= 0) {
+        $errors[] = 'ゲームIDを入力してください。';
+    }
+
+    if ($dateInput === '') {
+        $errors[] = '日付を入力してください。';
+    } else {
+        $dateObj    = DateTime::createFromFormat('Y-m-d', $dateInput);
+        $dateErrors = DateTime::getLastErrors();
+        if ($dateObj === false || ($dateErrors['warning_count'] ?? 0) > 0 || ($dateErrors['error_count'] ?? 0) > 0) {
+            $errors[] = '日付の形式が正しくありません。';
+        } else {
+            $today = new DateTime('today');
+            if ($dateObj < $today) {
+                $errors[] = '過去の日付は指定できません。';
+            }
+        }
+    }
+
+    if ($partySize <= 0) {
+        $errors[] = '人数は1以上で入力してください。';
+    }
+
+    if (empty($errors)) {
+        try {
+            // 同一ユーザー・同一ゲーム・同一日付の重複チェック
+            $dupStmt = $pdo->prepare('SELECT COUNT(*) FROM reservations WHERE user_id = :uid AND game_id = :gid AND reservation_date = :rdate');
+            $dupStmt->execute([
+                ':uid'   => $userId,
+                ':gid'   => $gameId,
+                ':rdate' => $dateInput,
+            ]);
+            $dupCount = (int)$dupStmt->fetchColumn();
+            if ($dupCount > 0) {
+                $errors[] = '同じ日付・同じゲームの予約が既に存在します。';
+            }
+        } catch (PDOException $e) {
+            $errors[] = '重複チェック中にエラーが発生しました。';
+        }
+    }
+
+    // 予約を登録
+    if (empty($errors)) {
+        try {
+            $stmt = $pdo->prepare('INSERT INTO reservations (user_id, game_id, reservation_date, party_size, status) VALUES (:uid, :gid, :rdate, :party_size, :status)');
+            $stmt->execute([
+                ':uid'        => $userId,
+                ':gid'        => $gameId,
+                ':rdate'      => $dateInput,
+                ':party_size' => $partySize,
+                ':status'     => 'reserved',
+            ]);
+            $success = '予約を登録しました。';
+        } catch (PDOException $e) {
+            $errors[] = '予約の登録に失敗しました。';
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>貸出予約 - Board Game Cafe</title>
     <link rel="stylesheet" href="style/reserve_style.css">
 </head>
-
 <body>
     <header>
         <h1>ボードゲームカフェ</h1>
     </header>
     <main>
         <h1>貸出予約</h1>
+
+        <?php if (!empty($errors)): ?>
+            <div class="error">
+                <ul>
+                    <?php foreach ($errors as $err): ?>
+                        <li><?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php elseif ($success !== ''): ?>
+            <p class="success"><?php echo htmlspecialchars($success, ENT_QUOTES, 'UTF-8'); ?></p>
+        <?php endif; ?>
+
         <div class="reserve_form">
-            <form action="#" method="post">
-                <p><label>日時<br><input id="date" type="date" value=""></label></p>
-                <p><label>人数<br><input type="number" value="1" min="1" max="10"></label></p>
-                <p><label>ゲーム<br><input class="game_name" type="text" value="<?php echo 'HelloWorld'; //ゲームのタイトルを表示する ?>" readonly></label></p>
-                <button>予約</button>
+            <form action="reserve.php" method="post">
+                <p><label>日付<br><input name="date" id="date" type="date" value=""></label></p>
+                <p><label>人数<br><input name="party_size" type="number" value="1" min="1" max="20"></label></p>
+                <p><label>ゲームID<br><input name="game_id" class="game_name" type="number" value="" min="1"></label></p>
+                <button type="submit">予約</button>
             </form>
             <script>
                 const date = document.getElementById("date");
@@ -54,5 +133,4 @@ require_once __DIR__ . '/auth_check.php';
         <p>© 2025 ボードゲームカフェ</p>
     </footer>
 </body>
-
 </html>
