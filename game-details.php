@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/init.php';
-/* PHPブロックがあるが、ここでは特に処理していない（必要なら後で追加） */
+require_once __DIR__ . '/auth_check.php';
 ?>
 
 
