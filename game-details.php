@@ -115,7 +115,6 @@ require_once __DIR__ . '/init.php';
         </div>
     </footer>
 
-    <script src="script/games-data.js"></script>
     <script src="script/game-details.js"></script>
     <script src="script/review.js"></script>
 </body>

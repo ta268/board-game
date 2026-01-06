@@ -139,7 +139,6 @@ require_once __DIR__ . '/init.php';
     </footer>
 
     <!-- JavaScript読み込み -->
-    <script src="script/games-data.js"></script>
     <script src="script/app.js"></script>
 </body>
 

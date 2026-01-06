@@ -6,8 +6,98 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewInput = document.getElementById('reviewInput');
     const starBtns = document.querySelectorAll('.star-btn');
     let currentRating = 0;
+    const gameId = getGameIdFromUrl();
 
-    // Star rating interaction
+    function getGameIdFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return parseInt(params.get('id'), 10);
+    }
+
+    function updateStars(value) {
+        starBtns.forEach(btn => {
+            const btnValue = parseInt(btn.dataset.value);
+            if (btnValue <= value) {
+                btn.style.color = '#ffa500';
+            } else {
+                btn.style.color = '#ddd';
+            }
+        });
+    }
+
+    async function loadReviews() {
+        if (!reviewsList || !gameId) return;
+        reviewsList.innerHTML = '<p class="no-reviews">“Ç‚İ‚İ’†...</p>';
+        try {
+            const res = await fetch(`reviews_api.php?game_id=${gameId}`);
+            const data = await res.json();
+            if (!data.ok || !Array.isArray(data.reviews)) {
+                throw new Error(data.error || 'ƒŒƒrƒ…[æ“¾‚É¸”s‚µ‚Ü‚µ‚½');
+            }
+            renderReviews(data.reviews);
+        } catch (err) {
+            reviewsList.innerHTML = `<p class="no-reviews">${err.message}</p>`;
+        }
+    }
+
+    function renderReviews(list) {
+        if (!reviewsList) return;
+        reviewsList.innerHTML = '';
+        if (!list || list.length === 0) {
+            reviewsList.innerHTML = '<p class="no-reviews">‚Ü‚¾ƒŒƒrƒ…[‚Í‚ ‚è‚Ü‚¹‚ñB</p>';
+            return;
+        }
+        list.forEach(r => {
+            const item = document.createElement('div');
+            item.className = 'review-item';
+            const safeName = r.user_name || 'ƒ†[ƒU[';
+            const stars = 'š'.repeat(Math.max(1, Math.min(5, parseInt(r.rating, 10) || 0)));
+            item.innerHTML = `
+                <div class="review-header">
+                    <span class="review-author">${safeName}</span>
+                    <span class="review-stars">${stars}</span>
+                    <span class="review-date">${r.created_at || ''}</span>
+                </div>
+                <p class="review-text"></p>
+            `;
+            item.querySelector('.review-text').textContent = r.comment || '';
+            reviewsList.appendChild(item);
+        });
+    }
+
+    async function submitReview() {
+        const text = reviewInput.value;
+        if (!text || currentRating === 0) {
+            alert('•]‰¿‚ÆƒRƒƒ“ƒg‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢');
+            return;
+        }
+        if (!gameId) {
+            alert('ƒQ[ƒ€ID‚ªæ“¾‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½');
+            return;
+        }
+        try {
+            const form = new FormData();
+            form.append('action', 'create');
+            form.append('game_id', gameId);
+            form.append('rating', currentRating);
+            form.append('comment', text);
+            const res = await fetch('reviews_api.php', {
+                method: 'POST',
+                body: form,
+            });
+            const data = await res.json();
+            if (!data.ok) {
+                throw new Error(data.error || '“Še‚É¸”s‚µ‚Ü‚µ‚½');
+            }
+            reviewInput.value = '';
+            currentRating = 0;
+            updateStars(0);
+            await loadReviews();
+            alert('ƒŒƒrƒ…[‚ğ“Še‚µ‚Ü‚µ‚½');
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
     if (starBtns) {
         starBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -18,55 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateStars(value) {
-        starBtns.forEach(btn => {
-            const btnValue = parseInt(btn.dataset.value);
-            if (btnValue <= value) {
-                btn.style.color = '#ffa500'; // Active color
-            } else {
-                btn.style.color = '#ddd'; // Inactive color
-            }
-        });
-    }
-
-    // Submit review (Mock)
     if (submitBtn) {
-        submitBtn.addEventListener('click', () => {
-            const text = reviewInput.value;
-            if (!text || currentRating === 0) {
-                alert('è©•ä¾¡ã¨ã‚³ãƒ¡ãƒ³ãƒˆã‚’å…¥åŠ›ã—ã¦ãã ã•ã„');
-                return;
-            }
-
-            // Create mock review element
-            const reviewItem = document.createElement('div');
-            reviewItem.className = 'review-item';
-            reviewItem.innerHTML = `
-                <div class="review-header">
-                    <span class="review-author">ã‚²ã‚¹ãƒˆãƒ¦ãƒ¼ã‚¶ãƒ¼</span>
-                    <span class="review-stars">${'â˜…'.repeat(currentRating)}</span>
-                </div>
-                <p class="review-text">${text}</p>
-            `;
-
-            if (reviewsList) {
-                // Remove "No reviews" message if exists
-                if (reviewsList.querySelector('.no-reviews')) {
-                    reviewsList.innerHTML = '';
-                }
-                reviewsList.prepend(reviewItem);
-            }
-
-            // Reset
-            reviewInput.value = '';
-            currentRating = 0;
-            updateStars(0);
-            alert('ãƒ¬ãƒ“ãƒ¥ãƒ¼ã‚’æŠ•ç¨¿ã—ã¾ã—ãŸï¼ˆãƒ‡ãƒ¢ï¼‰');
-        });
+        submitBtn.addEventListener('click', submitReview);
     }
 
-    // Initial message
-    if (reviewsList && reviewsList.children.length === 0) {
-        reviewsList.innerHTML = '<p class="no-reviews">ã¾ã ãƒ¬ãƒ“ãƒ¥ãƒ¼ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚</p>';
-    }
+    loadReviews();
 });

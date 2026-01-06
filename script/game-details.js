@@ -1,34 +1,49 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Helper to get query params
     const getGameIdFromUrl = () => {
         const params = new URLSearchParams(window.location.search);
         return parseInt(params.get('id'), 10);
     };
 
     const generateStars = (rating) => {
-        const fullStars = Math.floor(rating);
-        const hasHalf = rating % 1 !== 0; // Simplified for now (just check non-integer)
+        const r = isNaN(rating) ? 0 : Number(rating);
+        const fullStars = Math.floor(r);
+        const hasHalf = r % 1 !== 0;
         let starsHtml = '';
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
-                starsHtml += 'â˜…';
+                starsHtml += 'š';
             } else if (i === fullStars && hasHalf) {
-                starsHtml += 'â˜…'; // CSS or unicode for half star could be better but sticking to simple char for now
+                starsHtml += 'š';
             } else {
-                starsHtml += '<span style="color: #ddd;">â˜…</span>';
+                starsHtml += '<span style="color: #ddd;">š</span>';
             }
         }
+        starsHtml += `<span class="game-rating-value">${r.toFixed(1)}</span>`;
         return starsHtml;
     };
 
     const gameId = getGameIdFromUrl();
-    const game = typeof gamesData !== 'undefined' ? gamesData.find(g => g.id === gameId) : null;
+    if (!gameId) {
+        showNotFound();
+        return;
+    }
 
-    if (game) {
-        // Update Meta elements if needed
+    async function loadGame() {
+        try {
+            const res = await fetch(`games_api.php?id=${gameId}`);
+            const data = await res.json();
+            if (!data.ok || !data.game) {
+                throw new Error(data.error || 'ƒQ[ƒ€‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½');
+            }
+            renderGame(data.game);
+        } catch (err) {
+            showNotFound(err.message);
+        }
+    }
+
+    function renderGame(game) {
         document.title = `${game.title} - Board Game Cafe`;
 
-        // Get Elements
         const titleEl = document.getElementById('details-title');
         const imgEl = document.getElementById('details-img');
         const ratingEl = document.getElementById('details-rating');
@@ -36,34 +51,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const descEl = document.getElementById('details-desc');
         const metaListEl = document.getElementById('details-meta-list');
 
-        // Render Data
         if (titleEl) titleEl.textContent = game.title;
         if (imgEl) {
-            imgEl.src = game.image;
+            imgEl.src = game.image_url || '';
             imgEl.alt = game.title;
         }
-        if (ratingEl) ratingEl.innerHTML = `<span class="stars">${generateStars(game.rating)}</span>`;
+        if (ratingEl) ratingEl.innerHTML = `<span class="stars">${generateStars(game.rating || 0)}</span>`;
 
         if (statusEl) {
-            statusEl.textContent = game.available ? 'è²¸å‡ºå¯' : 'è²¸å‡ºä¸­';
-            statusEl.style.color = game.available ? '#28a745' : '#dc3545';
+            // Œ»ó‚Í‘İo‰Â”Û‚Ì—ñ‚ª‚È‚¢‚½‚ßAb’è•\¦
+            statusEl.textContent = '‘İo‰Â';
+            statusEl.style.color = '#28a745';
         }
 
-        if (descEl) descEl.textContent = game.description;
+        if (descEl) descEl.textContent = game.description || '';
 
         if (metaListEl) {
+            const players = (game.min_players && game.max_players)
+                ? `${game.min_players}?${game.max_players}l`
+                : '';
             metaListEl.innerHTML = `
-                <li>ãƒ»ã‚¸ãƒ£ãƒ³ãƒ«: ${game.genre}</li>
-                <li>ãƒ»ãƒ—ãƒ¬ã‚¤äººæ•°: ${game.players}</li>
-                <li>ãƒ»ãƒ—ãƒ¬ã‚¤æ™‚é–“: ${game.playtime}</li>
-                <li>ãƒ»å¯¾è±¡å¹´é½¢: ${game.age}</li>
+                <li>EƒWƒƒƒ“ƒ‹: ${game.genre || ''}</li>
+                <li>EƒvƒŒƒCl”: ${players}</li>
+                <li>EƒvƒŒƒCŠÔ: ${game.play_time || ''}</li>
+                <li>E“ïˆÕ“x: ${game.difficulty || ''}</li>
             `;
         }
-    } else {
-        // Game Not Found
+    }
+
+    function showNotFound(msg = 'ƒQ[ƒ€‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½') {
         const container = document.querySelector('.game-details-card');
         if (container) {
-            container.innerHTML = '<h2>ã‚²ãƒ¼ãƒ ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸ</h2><a href="game.php">ä¸€è¦§ã«æˆ»ã‚‹</a>';
+            container.innerHTML = `<h2>${msg}</h2><a href="game.php">ˆê——‚É–ß‚é</a>`;
         }
     }
+
+    loadGame();
 });
