@@ -1,5 +1,12 @@
 <?php
 //未ログイン時にログイン画面に遷移
+session_start();
+
+// 未ログインならログイン画面へ
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
