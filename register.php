@@ -53,7 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindValue(':name', $nickname, PDO::PARAM_STR);
             $stmt->bindValue(':email', $email, PDO::PARAM_STR);
             $stmt->bindValue(':password', $hashed, PDO::PARAM_STR);
-            $stmt->bindValue(':age', $age, PDO::PARAM_INT);
+            $stmt->bindValue(':age', $age, PDO::PARAM_INT); //要修正(年齢->生年月日)
+            //日付は YYYY-MM-DD の形式でformから渡されるみたいです
+            
             $stmt->execute();
 
             // 7. 登録完了 -> ログイン画面へ
@@ -76,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <header>
-        <h1>ボードゲームカフェ</h1>
+        <a href="index.php"><h1>ボードゲームカフェ</h1></a>
     </header>
     <main>
         <h1>会員登録</h1>
@@ -97,17 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <p><label for="email">メールアドレス</label></p>
     <p><input type="text" name="email" id="email" value="<?php echo htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8'); ?>"></p>
 
-    <p><label for="password">パスワード</label></p>
-    <p><input type="password" name="password" id="password"></p>
+                <p><label for="password">パスワード</label></p>
+                <p><input type="password" name="password" id="password"></p>
 
-    <p><label for="password_confirm">パスワード確認</label></p>
-    <p><input type="password" name="password_confirm" id="password_confirm"></p>
+                <p><label for="password_confirm">パスワード確認</label></p>
+                <p><input type="password" name="password_confirm" id="password_confirm"></p>
 
     <p><label for="age">年齢</label></p>
     <p><input type="number" name="age" id="age" value="<?php echo htmlspecialchars((string)($age ?? 18), ENT_QUOTES, 'UTF-8'); ?>" min="0" max="120"></p>
 
-    <button type="submit">会員登録</button>
-</form>
+                <button type="submit">会員登録</button>
+            </form>
             <p>既に会員登録されている方はこちら</p>
             <p><a href="login.php">ログイン</a></p>
         </div>

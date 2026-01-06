@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <header>
-        <h1>ボードゲームカフェ</h1>
+        <a href="index.php"><h1>ボードゲームカフェ</h1></a>
         <nav>
             <a class="header-link" href="register.php">会員登録</a>
         </nav>
@@ -64,18 +64,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>ログイン</h1>
         <div class="login_form">
 
-        <!-- エラー表示 -->
-        <?php if ($error !== ''): ?>
-            <p class="error">
-                <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
-            </p>
-        <?php endif; ?>
+            <!-- エラー表示 -->
+            <?php if ($error !== ''): ?>
+                <p class="error">
+                    <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+                </p>
+            <?php endif; ?>
 
             <form action="login.php" method="post">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
                 <p><label>メールアドレス<br>
-                <input type="text" name="email" 
-                value="<?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>"></label></p>
+                        <input type="text" name="email"
+                            value="<?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>"></label></p>
                 <p><label>パスワード<br><input type="password" name="password"></label></p>
                 <button type="submit">ログイン</button>
             </form>

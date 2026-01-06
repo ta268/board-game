@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <header>
-        <h1>ボードゲームカフェ</h1>
+        <a href="index.php"><h1>ボードゲームカフェ</h1></a>
     </header>
     <main>
         <h1>貸出予約</h1>

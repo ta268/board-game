@@ -11,11 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let starsHtml = '';
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
-                starsHtml += 'š';
+                starsHtml += 'ï¿½ï¿½';
             } else if (i === fullStars && hasHalf) {
-                starsHtml += 'š';
+                starsHtml += 'ï¿½ï¿½';
             } else {
-                starsHtml += '<span style="color: #ddd;">š</span>';
+                starsHtml += '<span style="color: #ddd;">ï¿½ï¿½</span>';
             }
         }
         starsHtml += `<span class="game-rating-value">${r.toFixed(1)}</span>`;
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`games_api.php?id=${gameId}`);
             const data = await res.json();
             if (!data.ok || !data.game) {
-                throw new Error(data.error || 'ƒQ[ƒ€‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½');
+                throw new Error(data.error || 'ï¿½Qï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½');
             }
             renderGame(data.game);
         } catch (err) {
@@ -59,8 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ratingEl) ratingEl.innerHTML = `<span class="stars">${generateStars(game.rating || 0)}</span>`;
 
         if (statusEl) {
-            // Œ»ó‚Í‘İo‰Â”Û‚Ì—ñ‚ª‚È‚¢‚½‚ßAb’è•\¦
-            statusEl.textContent = '‘İo‰Â';
+            // ï¿½ï¿½ï¿½ï¿½Í‘İoï¿½Â”Û‚Ì—ñ‚ª‚È‚ï¿½ï¿½ï¿½ï¿½ßAï¿½bï¿½ï¿½\ï¿½ï¿½
+            statusEl.textContent = 'ï¿½İoï¿½ï¿½';
             statusEl.style.color = '#28a745';
         }
 
@@ -68,21 +68,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (metaListEl) {
             const players = (game.min_players && game.max_players)
-                ? `${game.min_players}?${game.max_players}l`
+                ? `${game.min_players}?${game.max_players}ï¿½l`
                 : '';
             metaListEl.innerHTML = `
-                <li>EƒWƒƒƒ“ƒ‹: ${game.genre || ''}</li>
-                <li>EƒvƒŒƒCl”: ${players}</li>
-                <li>EƒvƒŒƒCŠÔ: ${game.play_time || ''}</li>
-                <li>E“ïˆÕ“x: ${game.difficulty || ''}</li>
+                <li>ï¿½Eï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ${game.genre || ''}</li>
+                <li>ï¿½Eï¿½vï¿½ï¿½ï¿½Cï¿½lï¿½ï¿½: ${players}</li>
+                <li>ï¿½Eï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½: ${game.play_time || ''}</li>
+                <li>ï¿½Eï¿½ï¿½Õ“x: ${game.difficulty || ''}</li>
             `;
         }
     }
 
-    function showNotFound(msg = 'ƒQ[ƒ€‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½') {
+    function showNotFound(msg = 'ï¿½Qï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½') {
         const container = document.querySelector('.game-details-card');
         if (container) {
-            container.innerHTML = `<h2>${msg}</h2><a href="game.php">ˆê——‚É–ß‚é</a>`;
+            container.innerHTML = `<h2>${msg}</h2><a href="game.php">ï¿½ê——ï¿½É–ß‚ï¿½</a>`;
         }
     }
 
