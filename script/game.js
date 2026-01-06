@@ -3,19 +3,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let games = [];
 
-    const gameListContainer = document.getElementById('game-list'); // ƒQ[ƒ€ˆê——•\¦ƒGƒŠƒA
-    const searchInput = document.getElementById('game-search');     // ŒŸõ—“
-    const searchBtn = document.querySelector('.search-btn');        // ŒŸõƒ{ƒ^ƒ“
-    const filterChips = document.querySelectorAll('.filter-chip');  // ƒtƒBƒ‹ƒ^[ƒ`ƒbƒv
+    const gameListContainer = document.getElementById('game-list'); // ã‚²ãƒ¼ãƒ ä¸€è¦§è¡¨ç¤ºã‚¨ãƒªã‚¢
+    const searchInput = document.getElementById('game-search');     // æ¤œç´¢æ¬„
+    const searchBtn = document.querySelector('.search-btn');        // æ¤œç´¢ãƒœã‚¿ãƒ³
+    const filterChips = document.querySelectorAll('.filter-chip');  // ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ãƒãƒƒãƒ—
 
     async function loadGames() {
         if (!gameListContainer) return;
-        gameListContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">“Ç‚İ‚İ’†...</p>';
+        gameListContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">èª­ã¿è¾¼ã¿ä¸­...</p>';
         try {
             const res = await fetch('games_api.php');
             const data = await res.json();
             if (!data.ok || !Array.isArray(data.games)) {
-                throw new Error(data.error || 'ƒQ[ƒ€æ“¾‚É¸”s‚µ‚Ü‚µ‚½');
+                throw new Error(data.error || 'ã‚²ãƒ¼ãƒ å–å¾—ã«å¤±æ•—ã—ã¾ã—ãŸ');
             }
             games = data.games;
             renderGames(games);
@@ -32,11 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
-                starsHtml += 'š';
+                starsHtml += 'â˜…';
             } else if (i === fullStars && hasHalf) {
-                starsHtml += 'š';
+                starsHtml += 'â˜…';
             } else {
-                starsHtml += '<span class="game-rating-empty">š</span>';
+                starsHtml += '<span class="game-rating-empty">â˜…</span>';
             }
         }
         starsHtml += `<span class="game-rating-value">${r.toFixed(1)}</span>`;
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (gamesToRender.length === 0) {
             gameListContainer.innerHTML =
-                '<p style="grid-column: 1/-1; text-align: center;">ŠY“–‚·‚éƒQ[ƒ€‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B</p>';
+                '<p style="grid-column: 1/-1; text-align: center;">è©²å½“ã™ã‚‹ã‚²ãƒ¼ãƒ ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚</p>';
             return;
         }
 
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="game-list-title">${game.title}</h3>
                         <div class="game-rating">${getStarRating(game.rating || 0)}</div>
                     </div>
-                    <a href="game-details.php?id=${game.id}" class="game-details-btn">Ú×‚ğŒ©‚é</a>
+                    <a href="game-details.php?id=${game.id}" class="game-details-btn">è©³ç´°ã‚’è¦‹ã‚‹</a>
                 </div>
             `;
             gameListContainer.appendChild(card);
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGames(filtered);
     }
 
-    // ‰Šúƒ[ƒh
+    // åˆæœŸãƒ­ãƒ¼ãƒ‰
     loadGames();
 
     if (searchBtn) {
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chip.addEventListener('click', function () {
                 filterChips.forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
-                // ƒtƒBƒ‹ƒ^ˆ—‚ğ’Ç‰Á‚·‚éê‡‚Í‚±‚±‚ÅÀ‘•
+                // ãƒ•ã‚£ãƒ«ã‚¿å‡¦ç†ã‚’è¿½åŠ ã™ã‚‹å ´åˆã¯ã“ã“ã§å®Ÿè£…
             });
         });
     }
