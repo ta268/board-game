@@ -81,6 +81,7 @@ CREATE TABLE `reservations` (
   `user_id` bigint(20) NOT NULL,
   `game_id` bigint(20) NOT NULL,
   `reservation_date` date NOT NULL,
+  `party_size` int(11) DEFAULT 1,
   `status` varchar(20) DEFAULT 'reserved',
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -111,6 +112,7 @@ CREATE TABLE `users` (
   `name` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `is_admin` tinyint(1) NOT NULL DEFAULT 0,
   `age` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()

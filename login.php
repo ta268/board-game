@@ -1,22 +1,21 @@
 <?php
-session_start();
-require_once 'db_connect.php';   // すでに作ってあるDB接続ファイル
+require_once __DIR__ . '/init.php';
 
 $error = '';
 $email = '';   // フォームに戻す用
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email      = trim($_POST['email'] ?? '');
+    $password   = $_POST['password'] ?? '';
+    $csrf_token = $_POST['csrf_token'] ?? '';
 
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    if ($email === '' || $password === '') {
+    if (!verify_csrf_token($csrf_token)) {
+        $error = '不正なリクエストです。';
+    } elseif ($email === '' || $password === '') {
         $error = 'メールアドレスとパスワードを入力してください。';
     } else {
         try {
-            // ★ カラム名は実際のテーブルに合わせて直してください
-            // 例：users テーブル、email カラム、password カラム
-            $sql = 'SELECT id, email, password FROM users WHERE email = :email LIMIT 1';
+            $sql = 'SELECT id, email, password, is_admin FROM users WHERE email = :email LIMIT 1';
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':email', $email, PDO::PARAM_STR);
             $stmt->execute();
@@ -24,19 +23,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password'])) {
-                // ログイン成功 → セッションに保存
-                $_SESSION['user_id'] = $user['id'];
+                // ログイン成功
+                session_regenerate_id(true);
+                $_SESSION['__regenerated_at'] = time();
+                $_SESSION['user_id']    = $user['id'];
                 $_SESSION['user_email'] = $user['email'];
+                $_SESSION['is_admin']   = (int)$user['is_admin'];
 
-                // ログイン後に飛ばすページ（home.php や index.php などに合わせて）
                 header('Location: index.php');
                 exit;
             } else {
-                // ログイン失敗
                 $error = 'メールアドレスまたはパスワードが間違っています。';
             }
         } catch (PDOException $e) {
-            $error = 'エラーが発生しました：' . $e->getMessage();
+            $error = 'エラーが発生しました。';
         }
     }
 }
@@ -72,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form action="login.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
                 <p><label>メールアドレス<br>
                         <input type="text" name="email"
                             value="<?php echo htmlspecialchars($email, ENT_QUOTES, 'UTF-8'); ?>"></label></p>

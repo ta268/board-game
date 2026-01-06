@@ -1,5 +1,5 @@
 <?php
-//後に追加
+require_once __DIR__ . '/init.php';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -34,8 +34,12 @@
 
             <!-- ナビゲーションメニュー -->
             <nav class="nav">
-                <a href="game.php" class="nav-link">ゲーム</a>
-                <a href="reservation_status.php" class="nav-link">予約状況</a>
+                <a href="game.php" class="nav-link active">ゲーム</a>
+                <a href="reserve.php" class="nav-link">貸し出し予約</a>
+                <?php if (isset($_SESSION['is_admin']) && (int)$_SESSION['is_admin'] === 1): ?>
+                    <a href="reserve_admin.php" class="nav-link">管理(予約)</a>
+                    <a href="review_admin.php" class="nav-link">管理(レビュー)</a>
+                <?php endif; ?>
             </nav>
             
             <?php 
@@ -141,7 +145,6 @@
     </footer>
 
     <!-- JavaScript読み込み -->
-    <script src="script/games-data.js"></script>
     <script src="script/app.js"></script>
 </body>
 
