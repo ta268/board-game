@@ -33,12 +33,15 @@ require_once __DIR__ . '/auth_check.php';
                 <?php endif; ?>
             </nav>
             
-            <?php 
-                echo '<a href="" class="login-btn"></a>';
-                /*ログインの有無で表示を切り替える
-                    未ログイン->ログイン(login.phpへ)
-                    ログイン->ユーザー名(mypage.phpへ)
-                */
+            <?php
+            if (isset($_SESSION['user_id'])) {
+                $stmt = $pdo->prepare('SELECT name FROM users WHERE id = :id');
+                $stmt->execute([':id' => $_SESSION['user_id']]);
+                $user = $stmt->fetch();
+                echo '<a href="mypage.php" class="login-btn">' . htmlspecialchars($user['name']) . ' さん</a>';
+            } else {
+                echo '<a href="login.php" class="login-btn">ログイン</a>';
+            }
             ?>
         </div>
     </header>

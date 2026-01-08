@@ -51,10 +51,6 @@ require_once __DIR__ . '/init.php';
             } else {
                 echo '<a href="login.php" class="login-btn">ログイン</a>';
             }
-                /*ログインの有無で表示を切り替える
-                    未ログイン->ログイン(login.phpへ)
-                    ログイン->ユーザー名(mypage.phpへ)
-                */
             ?>
             
         </div>
