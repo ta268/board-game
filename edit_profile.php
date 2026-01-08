@@ -78,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><label for="email">メールアドレス</label></p>
                 <p><input type="text" name="email" id="email"></p>
 
-                <p><label for="birthday">生年月日</label></p>
-                <p><input type="date" name="birthday" id="birthday" value="2000-01-01"></p>
+                <p><label for="age">年齢</label></p>
+                <p><input type="number" name="age" id="age" value="18" min="0" max="120"></p>
 
                 <button type="submit">変更する</button>
             </form>

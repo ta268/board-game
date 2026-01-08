@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$userId = (int)$_SESSION['user_id'];
+$userId = (int) $_SESSION['user_id'];
 $user = null;
 $reservations = [];
 
@@ -85,9 +85,9 @@ try {
 
                 <div class="profile-info">
                     <?php
-                        $stmt = $pdo->prepare('SELECT name, email, age FROM users WHERE id = :id');
-                        $stmt->execute([':id' => $_SESSION['user_id']]);
-                        $user = $stmt->fetch();
+                    $stmt = $pdo->prepare('SELECT name, email, age FROM users WHERE id = :id');
+                    $stmt->execute([':id' => $_SESSION['user_id']]);
+                    $user = $stmt->fetch();
                     ?>
                     <div class="profile-label">お名前</div>
                     <div class="profile-value"><?php echo htmlspecialchars($user['name']); ?></div>
@@ -100,7 +100,7 @@ try {
                 </div>
             </div>
 
-            <!-- 予約状況セクション（モック） -->
+            <!-- 予約状況セクション -->
             <div class="reservation-section">
                 <h2 class="section-title">予約状況一覧</h2>
                 <table class="reservation-table">
@@ -109,31 +109,48 @@ try {
                             <th>予約日</th>
                             <th>ゲームタイトル</th>
                             <th>状況</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>2025/12/20</td>
-                            <td>カタンの開拓者たち</td>
-                            <td><span class="status-badge status-reserved">予約中</span></td>
-                        </tr>
-                        <tr>
-                            <td>2025/12/15</td>
-                            <td>ドミニオン</td>
-                            <td><span class="status-badge status-returned">返却済</span></td>
-                        </tr>
-                        <tr>
-                            <td>2025/12/01</td>
-                            <td>カルカソンヌ</td>
-                            <td><span class="status-badge status-returned">返却済</span></td>
-                        </tr>
+                        <?php if (count($reservations) === 0): ?>
+                            <tr>
+                                <td colspan="4" style="text-align:center;">予約履歴はありません。</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($reservations as $res): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars(str_replace('-', '/', $res['reservation_date'])); ?></td>
+                                    <td><?php echo htmlspecialchars($res['game_title']); ?></td>
+                                    <td>
+                                        <?php if ($res['status'] === 'reserved'): ?>
+                                            <span class="status-badge status-reserved">予約中</span>
+                                        <?php elseif ($res['status'] === 'cancelled'): ?>
+                                            <span class="status-badge status-returned" style="background-color:#999;">キャンセル済</span>
+                                        <?php else: ?>
+                                            <span class="status-badge status-returned">返却済</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($res['status'] === 'reserved'): ?>
+                                            <button class="cancel-reservation-btn delete-btn" 
+                                                data-id="<?php echo $res['id']; ?>"
+                                                data-csrf="<?php echo csrf_token(); ?>">
+                                                キャンセル
+                                            </button>
+                                        <?php else: ?>
+                                            -
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
-
     <footer class="footer">
         <div class="container footer-container">
             <div class="footer-left">
@@ -145,6 +162,8 @@ try {
             </div>
         </div>
     </footer>
+    <script src="script/mypage.js"></script>
+
 </body>
 
 </html>
