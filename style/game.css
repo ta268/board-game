@@ -357,8 +357,8 @@ body {
         text-align: left;
     }
 
-    .logo-label {
-        display: none;
+    .logo .logo-label {
+        display: none !important;
     }
 }
 
@@ -547,11 +547,4 @@ body {
 
 .game-details-btn:hover {
     background-color: #13203a;
-}
-
-/* Portrait Mode Adjustments */
-@media (orientation: portrait) {
-    .logo {
-        display: none;
-    }
 }
