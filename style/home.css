@@ -70,6 +70,12 @@ body {
     text-decoration: none;
     color: var(--text-color);
     font-size: 0.9rem;
+    display: inline-block;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
 /* Hero */
@@ -327,7 +333,24 @@ body {
 }
 
 /* Responsive */
+/* Responsive */
 @media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav {
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -343,5 +366,11 @@ body {
 
     .footer-right {
         text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .games-grid {
+        grid-template-columns: 1fr;
     }
 }
