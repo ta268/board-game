@@ -1,15 +1,16 @@
+// ゲーム一覧データ（疑似データ / マスターデータ）
 const gamesData = [
     {
-        id: 1,
-        title: 'まじかる☆ベーカリー',
-        image: 'img/magical_bakery.jpg',
-        rating: 4.5,
-        available: true,
-        genre: 'strategy',
+        id: 1, // ゲームID（詳細ページやレビュー紐付けに使用）
+        title: 'まじかる☆ベーカリー', // ゲームタイトル
+        image: 'img/magical_bakery.jpg', // 表示用画像パス
+        rating: 4.5, // 平均評価（★表示などに使用）
+        available: true, // 貸出・プレイ可能かどうか
+        genre: 'strategy', // ジャンル（絞り込み検索用）
         description: '魔法のパン屋さんで、一番の魔法パン職人を目指そう！可愛い見た目とは裏腹に、戦略的な駆け引きが楽しめるゲームです。',
-        players: '2〜4人',
-        playtime: '30分',
-        age: '10歳以上'
+        players: '2〜4人', // プレイ人数
+        playtime: '30分', // プレイ時間目安
+        age: '10歳以上' // 対象年齢
     },
     {
         id: 2,
@@ -29,7 +30,7 @@ const gamesData = [
         image: 'img/quoridor.jpg',
         rating: 4.0,
         available: true,
-        genre: 'abstract',
+        genre: 'abstract', // アブストラクト（運要素の少ない思考型）
         description: '世界中で愛される名作ボードゲーム「コリドール」のミニ版。自分の駒を進めるか、相手の進路を壁で塞ぐか。シンプルながら奥深い戦略対戦ゲームです。',
         players: '2〜4人',
         playtime: '15分',
@@ -41,7 +42,7 @@ const gamesData = [
         image: 'img/trump.jpg',
         rating: 3.5,
         available: true,
-        genre: 'card',
+        genre: 'card', // カードゲーム
         description: '大日本帝国海軍の軍艦が描かれたトランプです。歴史を感じながら、通常のトランプゲームだけでなく、コレクションとしても楽しめます。',
         players: '2〜∞人',
         playtime: '10分〜',
@@ -77,7 +78,7 @@ const gamesData = [
         image: 'img/insider.jpg',
         rating: 4.2,
         available: true,
-        genre: 'party',
+        genre: 'party', // パーティーゲーム
         description: 'クイズと正体隠匿が合体！会話の中に潜む「インサイダー」を見つけ出そう。短時間で盛り上がれる、心理戦パーティーゲーム。',
         players: '4〜8人',
         playtime: '15分',

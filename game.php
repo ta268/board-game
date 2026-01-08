@@ -32,7 +32,11 @@ if (!isset($_SESSION['user_id'])) {
             </div>
             <nav class="nav">
                 <a href="index.php" class="nav-link">ホーム</a>
-                <a href="reservation_status.php" class="nav-link">予約状況</a>
+                <a href="reserve.php" class="nav-link">貸し出し予約</a>
+                <?php if (isset($_SESSION['is_admin']) && (int)$_SESSION['is_admin'] === 1): ?>
+                    <a href="reserve_admin.php" class="nav-link">管理(予約)</a>
+                    <a href="review_admin.php" class="nav-link">管理(レビュー)</a>
+                <?php endif; ?>
             </nav>
             
             <?php 
@@ -81,7 +85,6 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </footer>
 
-    <script src="script/games-data.js"></script>
     <script src="script/game.js"></script>
 </body>
 

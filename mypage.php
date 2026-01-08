@@ -1,5 +1,44 @@
 <?php
-// ここでセッション開始とログインチェックを行う
+require_once __DIR__ . '/init.php';
+
+// ログインチェック
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$userId = (int)$_SESSION['user_id'];
+$user = null;
+$reservations = [];
+
+try {
+    // ユーザー情報取得
+    $stmt = $pdo->prepare('SELECT name, email, age FROM users WHERE id = :id');
+    $stmt->execute([':id' => $userId]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        // ユーザーが存在しない場合（削除等）
+        session_destroy();
+        header('Location: login.php');
+        exit;
+    }
+
+    // 予約情報取得
+    $stmt = $pdo->prepare('
+        SELECT r.id, r.reservation_date, r.party_size, r.status, g.title AS game_title 
+        FROM reservations r
+        JOIN games g ON r.game_id = g.id
+        WHERE r.user_id = :uid
+        ORDER BY r.reservation_date DESC
+    ');
+    $stmt->execute([':uid' => $userId]);
+    $reservations = $stmt->fetchAll();
+
+} catch (PDOException $e) {
+    echo 'エラーが発生しました。';
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -29,8 +68,7 @@
                 <a href="game.php" class="nav-link">ゲーム一覧</a>
                 <a href="reservation_status.php" class="nav-link">予約状況</a>
             </nav>
-            <!-- ログアウトリンク（後で実装） -->
-            <a href="index.php" class="login-btn">ログアウト</a>
+            <a href="logout.php" class="login-btn">ログアウト</a>
         </div>
     </header>
 
@@ -46,14 +84,19 @@
                 </div>
 
                 <div class="profile-info">
+                    <?php
+                        $stmt = $pdo->prepare('SELECT name, email, age FROM users WHERE id = :id');
+                        $stmt->execute([':id' => $_SESSION['user_id']]);
+                        $user = $stmt->fetch();
+                    ?>
                     <div class="profile-label">お名前</div>
-                    <div class="profile-value">山田 太郎</div>
+                    <div class="profile-value"><?php echo htmlspecialchars($user['name']); ?></div>
 
                     <div class="profile-label">メールアドレス</div>
-                    <div class="profile-value">yamada@example.com</div>
+                    <div class="profile-value"><?php echo htmlspecialchars($user['email']); ?></div>
 
-                    <div class="profile-label">生年月日</div>
-                    <div class="profile-value">2000-01-01</div>
+                    <div class="profile-label">年齢</div>
+                    <div class="profile-value"><?php echo htmlspecialchars($user['age']); ?></div>
                 </div>
             </div>
 

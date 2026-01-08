@@ -1,8 +1,11 @@
-
 <?php
-require_once 'db_connect.php';  // DB接続
+
+require_once __DIR__ . '/init.php'; // session_start + db_connect
 
 $error = '';
+$nickname = '';
+$email = '';
+$age = 18;
 
 // フォームが送信されたときだけ実行
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,16 +16,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password         = $_POST['password'] ?? '';
     $password_confirm = $_POST['password_confirm'] ?? '';
     $age              = (int)($_POST['age'] ?? 0);
+    $csrf_token       = $_POST['csrf_token'] ?? '';
 
+    if (!verify_csrf_token($csrf_token)) {
+        $error = '不正なリクエストです。';
+    }
     // 1. 未入力チェック
-    if ($nickname === '' || $email === '' || $password === '' || $password_confirm === '' || $age === 0) {
+    elseif ($nickname === '' || $email === '' || $password === '' || $password_confirm === '' || $age === 0) {
         $error = '未入力の項目があります。';
     }
-    // 2. パスワード一致チェック
+    // 2. メール形式チェック
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'メールアドレスの形式が不正です。';
+    }
+    // 3. パスワード一致チェック
     elseif ($password !== $password_confirm) {
         $error = 'パスワードと確認用パスワードが一致していません。';
     } else {
-        // 3. メールアドレス重複チェック
+        // 4. メールアドレス重複チェック
         $sql = 'SELECT id FROM users WHERE email = :email';
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
@@ -32,11 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user) {
             $error = 'このメールアドレスは既に登録されています。';
         } else {
-            // 4. パスワードをハッシュ化
+            // 5. パスワードをハッシュ化
             $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-            // 5. users テーブルに INSERT
-            //    nickname → DB の name カラムに入れているのがポイント
+            // 6. users テーブルに INSERT
             $sql = 'INSERT INTO users (name, email, password, age)
                     VALUES (:name, :email, :password, :age)';
             $stmt = $pdo->prepare($sql);
@@ -48,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $stmt->execute();
 
-            // 6. 登録完了 → ログイン画面へ
+            // 7. 登録完了 -> ログイン画面へ
             header('Location: login.php');
             exit;
         }
@@ -82,11 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="register_form">
             <form action="register.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
                 <p><label for="nickname">ニックネーム</label></p>
-                <p><input type="text" name="nickname" id="nickname"></p>
+                <p><input type="text" name="nickname" id="nickname" value="<?php echo htmlspecialchars($nickname ?? '', ENT_QUOTES, 'UTF-8'); ?>"></p>
 
-                <p><label for="email">メールアドレス</label></p>
-                <p><input type="text" name="email" id="email"></p>
+    <p><label for="email">メールアドレス</label></p>
+    <p><input type="text" name="email" id="email" value="<?php echo htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8'); ?>"></p>
 
                 <p><label for="password">パスワード</label></p>
                 <p><input type="password" name="password" id="password"></p>
@@ -94,8 +105,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><label for="password_confirm">パスワード確認</label></p>
                 <p><input type="password" name="password_confirm" id="password_confirm"></p>
 
-                <p><label for="birthday">生年月日</label></p>
-                <p><input type="date" name="birthday" id="birthday" value="2000-01-01"></p>
+    <p><label for="age">年齢</label></p>
+    <p><input type="number" name="age" id="age" value="<?php echo htmlspecialchars((string)($age ?? 18), ENT_QUOTES, 'UTF-8'); ?>" min="0" max="120"></p>
 
                 <button type="submit">会員登録</button>
             </form>
