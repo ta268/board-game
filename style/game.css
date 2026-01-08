@@ -356,6 +356,10 @@ body {
     .footer-right {
         text-align: left;
     }
+
+    .logo-label {
+        display: none;
+    }
 }
 
 @media (max-width: 480px) {
