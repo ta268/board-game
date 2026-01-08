@@ -17,7 +17,13 @@ if (isset($_GET['id'])) {
         respond(false, ['error' => '不正なIDです'], 400);
     }
     try {
-        $stmt = $pdo->prepare('SELECT id, title, description, genre, min_players, max_players, difficulty, play_time, image_url, created_at, updated_at FROM games WHERE id = :id');
+        $stmt = $pdo->prepare(
+            'SELECT g.id, g.title, g.description, g.genre, g.min_players, g.max_players, g.difficulty, g.play_time,
+                    g.image_url, g.created_at, g.updated_at,
+                    COALESCE(ROUND((SELECT AVG(r.rating) FROM reviews r WHERE r.game_id = g.id), 1), 0) AS rating
+             FROM games g
+             WHERE g.id = :id'
+        );
         $stmt->execute([':id' => $id]);
         $game = $stmt->fetch();
         if (!$game) {
@@ -31,7 +37,13 @@ if (isset($_GET['id'])) {
 
 // 一覧取得
 try {
-    $stmt = $pdo->query('SELECT id, title, description, genre, min_players, max_players, difficulty, play_time, image_url, created_at, updated_at FROM games ORDER BY created_at DESC');
+    $stmt = $pdo->query(
+        'SELECT g.id, g.title, g.description, g.genre, g.min_players, g.max_players, g.difficulty, g.play_time,
+                g.image_url, g.created_at, g.updated_at,
+                COALESCE(ROUND((SELECT AVG(r.rating) FROM reviews r WHERE r.game_id = g.id), 1), 0) AS rating
+         FROM games g
+         ORDER BY g.created_at DESC'
+    );
     $games = $stmt->fetchAll();
     respond(true, ['games' => $games]);
 } catch (PDOException $e) {

@@ -33,7 +33,8 @@ if (!isset($_SESSION['user_id'])) {
             <nav class="nav">
                 <a href="index.php" class="nav-link">ホーム</a>
                 <a href="reserve.php" class="nav-link">貸し出し予約</a>
-                <?php if (isset($_SESSION['is_admin']) && (int) $_SESSION['is_admin'] === 1): ?>
+                <?php if (isset($_SESSION['is_admin']) && (int)$_SESSION['is_admin'] === 1): ?>
+                    <a href="game_admin.php" class="nav-link">管理(ゲーム)</a>
                     <a href="reserve_admin.php" class="nav-link">管理(予約)</a>
                     <a href="review_admin.php" class="nav-link">管理(レビュー)</a>
                 <?php endif; ?>

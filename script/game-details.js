@@ -1,96 +1,111 @@
-// DOMの読み込み完了後に実行
 document.addEventListener('DOMContentLoaded', () => {
-
-    // ===== URLクエリからゲームIDを取得するヘルパー関数 =====
-    const getGameIdFromUrl = () => {
-        const params = new URLSearchParams(window.location.search);
-        return parseInt(params.get('id'), 10); // ?id=◯◯ を数値で返す
+    const text = {
+        notFound: '\u30b2\u30fc\u30e0\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f',
+        backToList: '\u30b2\u30fc\u30e0\u4e00\u89a7\u3078\u623b\u308b',
+        statusAvailable: '\u8cb8\u51fa\u53ef\u80fd',
+        labelGenre: '\u30b8\u30e3\u30f3\u30eb',
+        labelPlayers: '\u30d7\u30ec\u30a4\u4eba\u6570',
+        labelPlayTime: '\u30d7\u30ec\u30a4\u6642\u9593',
+        labelDifficulty: '\u96e3\u6613\u5ea6',
+        unitPeople: '\u4eba',
+        suffixMore: '\u4ee5\u4e0a',
+        suffixUntil: '\u307e\u3067',
     };
 
-    // ===== 評価（★）表示用HTML生成関数 =====
+    const getGameIdFromUrl = () => {
+        const params = new URLSearchParams(window.location.search);
+        return parseInt(params.get('id'), 10);
+    };
+
     const generateStars = (rating) => {
-        const fullStars = Math.floor(rating); // 整数部分の星
-        const hasHalf = rating % 1 !== 0;     // 小数があるかどうか
+        const r = isNaN(rating) ? 0 : Number(rating);
+        const fullStars = Math.floor(r);
+        const hasHalf = r % 1 !== 0;
+        const starFull = '\u2605';
+        const starEmpty = '\u2606';
         let starsHtml = '';
 
-        // 最大5つの星を生成
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
-                starsHtml += '★'; // 塗りつぶし星
+                starsHtml += starFull;
             } else if (i === fullStars && hasHalf) {
-                // 半分評価（簡易的に同じ★で表現）
-                // ※ 将来的にCSSやSVGで半分星に差し替え可能
-                starsHtml += '★';
+                starsHtml += starFull;
             } else {
-                // 未評価の星（グレー表示）
-                starsHtml += '<span style="color: #ddd;">★</span>';
+                starsHtml += `<span style="color: #ddd;">${starEmpty}</span>`;
             }
         }
+        starsHtml += `<span class="game-rating-value">${r.toFixed(1)}</span>`;
         return starsHtml;
     };
 
-    // ===== ゲームIDとゲームデータ取得 =====
     const gameId = getGameIdFromUrl();
+    if (!gameId) {
+        showNotFound();
+        return;
+    }
 
-    // gamesData が存在する場合のみ該当ゲームを検索
-    const game = typeof gamesData !== 'undefined'
-        ? gamesData.find(g => g.id === gameId)
-        : null;
+    async function loadGame() {
+        try {
+            const res = await fetch(`games_api.php?id=${gameId}`);
+            const data = await res.json();
+            if (!data.ok || !data.game) {
+                throw new Error(data.error || text.notFound);
+            }
+            renderGame(data.game);
+        } catch (err) {
+            showNotFound(err.message);
+        }
+    }
 
-    // ===== ゲームが見つかった場合 =====
-    if (game) {
-        // ページタイトルを動的に変更
+    function renderGame(game) {
         document.title = `${game.title} - Board Game Cafe`;
 
-        // ===== DOM要素取得 =====
-        const titleEl = document.getElementById('details-title');        // タイトル表示
-        const imgEl = document.getElementById('details-img');            // 画像表示
-        const ratingEl = document.getElementById('details-rating');      // 評価表示
-        const statusEl = document.getElementById('details-status');      // 貸出状況
-        const descEl = document.getElementById('details-desc');          // 説明文
-        const metaListEl = document.getElementById('details-meta-list'); // メタ情報リスト
+        const titleEl = document.getElementById('details-title');
+        const imgEl = document.getElementById('details-img');
+        const ratingEl = document.getElementById('details-rating');
+        const statusEl = document.getElementById('details-status');
+        const descEl = document.getElementById('details-desc');
+        const metaListEl = document.getElementById('details-meta-list');
 
-        // ===== データ描画 =====
         if (titleEl) titleEl.textContent = game.title;
-
         if (imgEl) {
-            imgEl.src = game.image;
+            imgEl.src = game.image_url || '';
             imgEl.alt = game.title;
         }
+        if (ratingEl) ratingEl.innerHTML = `<span class="stars">${generateStars(game.rating || 0)}</span>`;
 
-        // 星評価をHTMLとして挿入
-        if (ratingEl) {
-            ratingEl.innerHTML =
-                `<span class="stars">${generateStars(game.rating)}</span>`;
-        }
-
-        // 貸出状況表示（色分け）
         if (statusEl) {
-            statusEl.textContent = game.available ? '貸出可' : '貸出中';
-            statusEl.style.color = game.available ? '#28a745' : '#dc3545';
+            statusEl.textContent = text.statusAvailable;
+            statusEl.style.color = '#28a745';
         }
 
-        // ゲーム説明
-        if (descEl) descEl.textContent = game.description;
+        if (descEl) descEl.textContent = game.description || '';
 
-        // ゲーム詳細メタ情報
         if (metaListEl) {
-            metaListEl.innerHTML = `
-                <li>・ジャンル: ${game.genre}</li>
-                <li>・プレイ人数: ${game.players}</li>
-                <li>・プレイ時間: ${game.playtime}</li>
-                <li>・対象年齢: ${game.age}</li>
-            `;
-        }
+            let players = '';
+            if (game.min_players && game.max_players) {
+                players = `${game.min_players}-${game.max_players}${text.unitPeople}`;
+            } else if (game.min_players) {
+                players = `${game.min_players}${text.unitPeople}${text.suffixMore}`;
+            } else if (game.max_players) {
+                players = `${game.max_players}${text.unitPeople}${text.suffixUntil}`;
+            }
 
-    } else {
-        // ===== ゲームが見つからなかった場合 =====
-        const container = document.querySelector('.game-details-card');
-        if (container) {
-            container.innerHTML = `
-                <h2>ゲームが見つかりませんでした</h2>
-                <a href="game.html">一覧に戻る</a>
+            metaListEl.innerHTML = `
+                <li>${text.labelGenre}: ${game.genre || ''}</li>
+                <li>${text.labelPlayers}: ${players}</li>
+                <li>${text.labelPlayTime}: ${game.play_time || ''}</li>
+                <li>${text.labelDifficulty}: ${game.difficulty || ''}</li>
             `;
         }
     }
+
+    function showNotFound(msg = text.notFound) {
+        const container = document.querySelector('.game-details-card');
+        if (container) {
+            container.innerHTML = `<h2>${msg}</h2><a href="game.php">${text.backToList}</a>`;
+        }
+    }
+
+    loadGame();
 });
