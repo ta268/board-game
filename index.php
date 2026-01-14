@@ -1,5 +1,20 @@
 <?php
 require_once __DIR__ . '/init.php';
+$availableGameCount = 0;
+$reservationCount = 0;
+$reviewCount = 0;
+
+try {
+    $availableGameCount = (int) $pdo->query('SELECT COUNT(*) FROM games')->fetchColumn();
+    $reservationCount = (int) $pdo
+        ->query("SELECT COUNT(*) FROM reservations WHERE status <> 'cancelled'")
+        ->fetchColumn();
+    $reviewCount = (int) $pdo->query('SELECT COUNT(*) FROM reviews')->fetchColumn();
+} catch (PDOException $e) {
+    $availableGameCount = 0;
+    $reservationCount = 0;
+    $reviewCount = 0;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -66,19 +81,19 @@ require_once __DIR__ . '/init.php';
                 <!-- 上に重なる統計情報カード -->
                 <div class="hero-stats-overlay">
                     <div class="hero-stat-card rotate-left">
-                        <span class="stat-number">50</span> <!-- ゲーム数 -->
+                        <span class="stat-number"><?php echo $availableGameCount; ?></span> <!-- ゲーム数 -->
                         <span class="stat-label">貸出可能なゲーム</span>
                     </div>
 
                     <a href="game.php" class="cta-button">ゲーム一覧を見る</a> <!-- CTAボタン -->
 
                     <div class="hero-stat-card rotate-right">
-                        <span class="stat-number">5</span> <!-- 予約数 -->
+                        <span class="stat-number"><?php echo $reservationCount; ?></span> <!-- 予約数 -->
                         <span class="stat-label">予約数</span>
                     </div>
 
                     <div class="hero-stat-card rotate-right-2">
-                        <span class="stat-number">30</span> <!-- レビュー数 -->
+                        <span class="stat-number"><?php echo $reviewCount; ?></span> <!-- レビュー数 -->
                         <span class="stat-label">レビュー数</span>
                     </div>
                 </div>
@@ -90,15 +105,15 @@ require_once __DIR__ . '/init.php';
             <div class="container stats-grid">
                 <div class="stat-box">
                     <p class="stat-box-label">貸出可能なゲーム</p>
-                    <p class="stat-box-number">50</p>
+                    <p class="stat-box-number"><?php echo $availableGameCount; ?></p>
                 </div>
                 <div class="stat-box">
                     <p class="stat-box-label">予約数</p>
-                    <p class="stat-box-number">5</p>
+                    <p class="stat-box-number"><?php echo $reservationCount; ?></p>
                 </div>
                 <div class="stat-box">
                     <p class="stat-box-label">レビュー数</p>
-                    <p class="stat-box-number">30</p>
+                    <p class="stat-box-number"><?php echo $reviewCount; ?></p>
                 </div>
             </div>
         </section>
