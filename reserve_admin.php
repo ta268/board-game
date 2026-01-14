@@ -14,11 +14,10 @@ $reservationRows = [];
 $reservationData = [];
 try {
     $stmt = $pdo->query("
-        SELECT r.reservation_date, u.name AS user_name, g.title AS game_title, r.status
+        SELECT r.reservation_date, r.party_size, r.status, u.name AS user_name, g.title AS game_title
         FROM reservations r
         JOIN users u ON r.user_id = u.id
         JOIN games g ON r.game_id = g.id
-        WHERE r.status <> 'cancelled'
         ORDER BY r.reservation_date ASC, r.id ASC
     ");
     $reservationRows = $stmt->fetchAll();
@@ -31,6 +30,8 @@ foreach ($reservationRows as $row) {
         'date' => $row['reservation_date'],
         'name' => $row['user_name'],
         'game' => $row['game_title'],
+        'party_size' => (int) ($row['party_size'] ?? 0),
+        'status' => $row['status'],
     ];
 }
 ?>
@@ -92,6 +93,8 @@ foreach ($reservationRows as $row) {
                             <th>日付</th>
                             <th>予約者名</th>
                             <th>ゲーム</th>
+                            <th>人数</th>
+                            <th>ステータス</th>
                         </tr>
                     </thead>
                     <tbody id="reservation-list">
@@ -113,6 +116,16 @@ foreach ($reservationRows as $row) {
         const reservations = <?php echo json_encode($reservationData, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
         let currentTab = 'future'; // 'future' or 'past'
+
+        function getStatusInfo(status) {
+            if (status === 'reserved') {
+                return { label: '予約中', className: 'status-reserved' };
+            }
+            if (status === 'cancelled') {
+                return { label: 'キャンセル', className: 'status-cancelled' };
+            }
+            return { label: '不明', className: 'status-other' };
+        }
 
         function switchTab(tabName) {
             currentTab = tabName;
@@ -172,10 +185,15 @@ foreach ($reservationRows as $row) {
                         dateDisplay += ' <span class="badge-today">今日</span>';
                     }
 
+                    const statusInfo = getStatusInfo(r.status);
+                    const partySize = (r.party_size === null || r.party_size === undefined) ? '-' : r.party_size;
+
                     tr.innerHTML = `
                         <td>${dateDisplay}</td>
                         <td>${r.name}</td>
                         <td>${r.game}</td>
+                        <td>${partySize}</td>
+                        <td><span class="status-badge ${statusInfo.className}">${statusInfo.label}</span></td>
                     `;
                     listBody.appendChild(tr);
                 });

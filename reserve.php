@@ -90,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <header>
         <a href="index.php"><h1>ボードゲームカフェ</h1></a>
+        <a href="index.php" class="header-link">&#x30DB;&#x30FC;&#x30E0;&#x306B;&#x623B;&#x308B;</a>
     </header>
     <main>
         <h1>貸出予約</h1>

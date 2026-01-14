@@ -8,8 +8,8 @@ header {
     background-color: #ddd6c1;
     color: #fff;
     padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
 }
 
@@ -28,6 +28,11 @@ header a {
     color: #fff;
     text-decoration: none;
     font-size: 0.9rem;
+    justify-self: center;
+}
+
+header a:first-child {
+    justify-self: start;
 }
 
 main {
