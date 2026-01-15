@@ -44,7 +44,7 @@ CREATE TABLE `games` (
   `id` bigint(20) NOT NULL,
   `title` varchar(100) NOT NULL,
   `description` text DEFAULT NULL,
-  `genre` varchar(50) DEFAULT NULL,
+  `genre` varchar(255) DEFAULT NULL,
   `min_players` int(11) DEFAULT NULL,
   `max_players` int(11) DEFAULT NULL,
   `difficulty` varchar(20) DEFAULT NULL,

@@ -6,6 +6,22 @@ $success = '';
 $gameId = isset($_GET['game_id']) ? (int) $_GET['game_id'] : '';
 $dateInput = '';
 $partySize = 1;
+$games = [];
+$gameListError = '';
+
+try {
+    $stmt = $pdo->query('SELECT id, title, min_players, max_players, play_time, image_url, genre FROM games ORDER BY title');
+    $games = $stmt->fetchAll();
+    if (empty($games)) {
+        $gameListError = 'ゲームが登録されていません。';
+    }
+} catch (PDOException $e) {
+    $gameListError = 'ゲーム一覧の取得に失敗しました。';
+}
+
+if ($gameListError !== '') {
+    $errors[] = $gameListError;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = (int) ($_SESSION['user_id'] ?? 0);
@@ -20,7 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 入力チェック
     if ($gameId <= 0) {
-        $errors[] = 'ゲームIDを入力してください。';
+        $errors[] = 'ゲームを選択してください。';
+    } elseif (!empty($games)) {
+        $validGameIds = array_map('intval', array_column($games, 'id'));
+        if (!in_array($gameId, $validGameIds, true)) {
+            $errors[] = '選択されたゲームが見つかりません。';
+        }
     }
 
     if ($dateInput === '') {
@@ -91,9 +112,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <header>
-        <a href="index.php">
-            <h1>ボードゲームカフェ</h1>
-        </a>
+        <div class="header-container">
+        <a href="index.php"><h1>ボードゲームカフェ</h1></a>
+
+            <nav class="nav">
+                <a href="index.php" class="nav-link">ホームに戻る</a>
+            </nav>
+        </div>
     </header>
     <main>
         <h1>貸出予約</h1>
@@ -115,12 +140,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="csrf_token"
                     value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
                 <p><label>日付<br><input name="date" id="date" type="date" value=""></label></p>
-                <p><label>人数<br><input name="party_size" type="number"
-                            value="<?php echo htmlspecialchars((string) ($partySize ?? 1), ENT_QUOTES, 'UTF-8'); ?>"
-                            min="1" max="20"></label></p>
-                <p><label>ゲームID<br><input name="game_id" class="game_name" type="number"
-                            value="<?php echo htmlspecialchars((string) ($gameId ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
-                            min="1"></label></p>
+                <p><label>プレイ人数<br><input name="party_size" type="number" value="<?php echo htmlspecialchars((string)($partySize ?? 1), ENT_QUOTES, 'UTF-8'); ?>" min="1" max="20"></label></p>
+                <?php if (empty($games)): ?>
+                    <p class="empty-message">表示できるゲームがありません。</p>
+                <?php else: ?>
+                    <p><label>ゲーム<br>
+                        <select name="game_id" id="game-select" required>
+                            <option value="">選択してください</option>
+                            <?php foreach ($games as $game): ?>
+                                <?php
+                                $minPlayers = isset($game['min_players']) ? (int)$game['min_players'] : 0;
+                                $maxPlayers = isset($game['max_players']) ? (int)$game['max_players'] : 0;
+                                $metaParts = [];
+                                if ($minPlayers > 0 && $maxPlayers > 0) {
+                                    $metaParts[] = ($minPlayers === $maxPlayers) ? $minPlayers . '人' : $minPlayers . '-' . $maxPlayers . '人';
+                                } elseif ($minPlayers > 0) {
+                                    $metaParts[] = $minPlayers . '人以上';
+                                } elseif ($maxPlayers > 0) {
+                                    $metaParts[] = $maxPlayers . '人まで';
+                                }
+                                if (!empty($game['play_time'])) {
+                                    $metaParts[] = $game['play_time'];
+                                }
+                                $metaLabel = $metaParts ? implode(' / ', $metaParts) : '';
+                                $genreLabel = !empty($game['genre']) ? (string)$game['genre'] : '';
+                                $imageUrl = !empty($game['image_url']) ? (string)$game['image_url'] : '';
+                                $optionLabel = $game['title'] . ($metaLabel !== '' ? '（' . $metaLabel . '）' : '');
+                                ?>
+                                <option value="<?php echo htmlspecialchars((string)$game['id'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-image="<?php echo htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-title="<?php echo htmlspecialchars($game['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-meta="<?php echo htmlspecialchars($metaLabel, ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-genre="<?php echo htmlspecialchars($genreLabel, ENT_QUOTES, 'UTF-8'); ?>"<?php echo ((int)$gameId === (int)$game['id']) ? ' selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($optionLabel, ENT_QUOTES, 'UTF-8'); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label></p>
+                    <div class="game-preview" id="game-preview">
+                        <div class="preview-media">
+                            <img id="game-preview-image" src="" alt="" width="120" height="120" hidden>
+                            <span class="preview-placeholder" id="game-preview-placeholder">ゲームを選択すると画像が表示されます</span>
+                        </div>
+                        <div class="preview-content">
+                            <div class="preview-title" id="game-preview-title">ゲームを選択してください</div>
+                            <div class="preview-meta" id="game-preview-meta"></div>
+                            <span class="preview-tag" id="game-preview-tag" hidden></span>
+                        </div>
+                    </div>
+                <?php endif; ?>
                 <button type="submit">予約する</button>
             </form>
             <script>
@@ -142,6 +210,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             this.value = todayStr;
                         }
                     });
+                }
+
+                const gameSelect = document.getElementById("game-select");
+                if (gameSelect) {
+                    const previewImage = document.getElementById("game-preview-image");
+                    const previewPlaceholder = document.getElementById("game-preview-placeholder");
+                    const previewTitle = document.getElementById("game-preview-title");
+                    const previewMeta = document.getElementById("game-preview-meta");
+                    const previewTag = document.getElementById("game-preview-tag");
+
+                    const updatePreview = () => {
+                        const selectedOption = gameSelect.options[gameSelect.selectedIndex];
+                        const hasSelection = gameSelect.value !== '';
+                        const title = selectedOption?.dataset.title || '';
+                        const meta = selectedOption?.dataset.meta || '';
+                        const genre = selectedOption?.dataset.genre || '';
+                        const imageUrl = selectedOption?.dataset.image || '';
+
+                        if (!hasSelection) {
+                            if (previewTitle) {
+                                previewTitle.textContent = 'ゲームを選択してください';
+                            }
+                            if (previewMeta) {
+                                previewMeta.textContent = '';
+                            }
+                            if (previewTag) {
+                                previewTag.textContent = '';
+                                previewTag.hidden = true;
+                            }
+                            if (previewImage) {
+                                previewImage.hidden = true;
+                                previewImage.removeAttribute('src');
+                                previewImage.alt = '';
+                            }
+                            if (previewPlaceholder) {
+                                previewPlaceholder.textContent = 'ゲームを選択すると画像が表示されます';
+                                previewPlaceholder.hidden = false;
+                            }
+                            return;
+                        }
+
+                        if (previewTitle) {
+                            previewTitle.textContent = title || selectedOption.textContent.trim();
+                        }
+                        if (previewMeta) {
+                            previewMeta.textContent = meta;
+                        }
+                        if (previewTag) {
+                            if (genre) {
+                                previewTag.textContent = genre;
+                                previewTag.hidden = false;
+                            } else {
+                                previewTag.textContent = '';
+                                previewTag.hidden = true;
+                            }
+                        }
+                        if (previewImage && imageUrl) {
+                            previewImage.src = imageUrl;
+                            previewImage.alt = title;
+                            previewImage.hidden = false;
+                            if (previewPlaceholder) {
+                                previewPlaceholder.hidden = true;
+                            }
+                        } else {
+                            if (previewImage) {
+                                previewImage.hidden = true;
+                                previewImage.removeAttribute('src');
+                                previewImage.alt = '';
+                            }
+                            if (previewPlaceholder) {
+                                previewPlaceholder.textContent = '画像なし';
+                                previewPlaceholder.hidden = false;
+                            }
+                        }
+                    };
+
+                    if (previewImage && previewPlaceholder) {
+                        previewImage.addEventListener("error", () => {
+                            previewImage.hidden = true;
+                            previewImage.removeAttribute('src');
+                            previewImage.alt = '';
+                            previewPlaceholder.textContent = '画像なし';
+                            previewPlaceholder.hidden = false;
+                        });
+                    }
+
+                    gameSelect.addEventListener("change", updatePreview);
+                    updatePreview();
                 }
             </script>
         </div>

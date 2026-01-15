@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameListContainer = document.getElementById('game-list'); // ゲーム一覧表示エリア
     const searchInput = document.getElementById('game-search');     // ゲーム検索入力欄
     const searchBtn = document.querySelector('.search-btn');        // 検索ボタン
-    const filterChips = document.querySelectorAll('.filter-chip');  // ジャンル等のフィルターチップ
+    const filterSelect = document.getElementById('game-filter');
+    const presetGenres = Array.isArray(window.GAME_GENRES) ? window.GAME_GENRES : [];
 
     // ===== ゲーム一覧をAPIから取得 =====
     async function loadGames() {
@@ -31,7 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 取得データを保持し描画
             games = data.games;
-            renderGames(games);
+            buildFilterOptions(games);
+            applyFilters();
         } catch (err) {
             // エラー時の表示
             gameListContainer.innerHTML =
@@ -60,6 +62,102 @@ document.addEventListener('DOMContentLoaded', () => {
         // 数値評価表示
         starsHtml += `<span class="game-rating-value">${r.toFixed(1)}</span>`;
         return starsHtml;
+    }
+
+    function normalizeText(value) {
+        return (value || '').toString().trim().toLowerCase();
+    }
+
+    function splitGenres(value) {
+        return (value || '')
+            .toString()
+            .split(/[\/／,，・]/)
+            .map(part => part.trim())
+            .filter(Boolean)
+            .map(part => ({
+                key: normalizeText(part),
+                label: part,
+            }));
+    }
+
+    function isAvailable(game) {
+        if (!game) return false;
+        if (game.is_available === true) return true;
+        if (game.is_available === false) return false;
+        return Number(game.is_available) === 1;
+    }
+
+    function updateFilterActiveState() {
+        if (!filterSelect) return;
+        filterSelect.classList.toggle('active', filterSelect.value !== 'all');
+    }
+
+    function normalizeGenreList(list) {
+        const genreMap = new Map();
+
+        list.forEach(item => {
+            splitGenres(item).forEach(({ key, label }) => {
+                if (!genreMap.has(key)) {
+                    genreMap.set(key, label);
+                }
+            });
+        });
+
+        return Array.from(genreMap.entries()).sort((a, b) => {
+            return a[1].localeCompare(b[1], 'ja');
+        });
+    }
+
+    function buildFilterOptions(list) {
+        if (!filterSelect) return;
+
+        const currentValue = filterSelect.value || 'all';
+        const entries = presetGenres.length > 0
+            ? normalizeGenreList(presetGenres)
+            : normalizeGenreList(list.map(game => game.genre || ''));
+
+        filterSelect.innerHTML = '';
+        const validValues = new Set();
+
+        const allOption = document.createElement('option');
+        allOption.value = 'all';
+        allOption.textContent = 'すべてのジャンル';
+        filterSelect.appendChild(allOption);
+        validValues.add('all');
+
+        const sortGroup = document.createElement('optgroup');
+        sortGroup.label = '並び替え';
+        const ratingOption = document.createElement('option');
+        ratingOption.value = 'sort:rating';
+        ratingOption.textContent = '★ 評価順';
+        sortGroup.appendChild(ratingOption);
+        filterSelect.appendChild(sortGroup);
+        validValues.add('sort:rating');
+
+        const availabilityGroup = document.createElement('optgroup');
+        availabilityGroup.label = '貸出状況';
+        const availableOption = document.createElement('option');
+        availableOption.value = 'filter:available';
+        availableOption.textContent = '貸出可能のみ';
+        availabilityGroup.appendChild(availableOption);
+        filterSelect.appendChild(availabilityGroup);
+        validValues.add('filter:available');
+
+        if (entries.length > 0) {
+            const genreGroup = document.createElement('optgroup');
+            genreGroup.label = 'ジャンル';
+            entries.forEach(([key, label]) => {
+                const option = document.createElement('option');
+                option.value = `genre:${key}`;
+                option.textContent = label;
+                genreGroup.appendChild(option);
+                validValues.add(option.value);
+            });
+            filterSelect.appendChild(genreGroup);
+        }
+
+        filterSelect.value = validValues.has(currentValue) ? currentValue : 'all';
+        updateFilterActiveState();
     }
 
     // ===== ゲーム一覧を画面に描画 =====
@@ -100,17 +198,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ===== 検索処理（タイトル一致） =====
-    function filterGames() {
-        if (!searchInput) return;
+    // ===== 絞り込み/並び替え =====
+    function applyFilters() {
+        if (!gameListContainer) return;
 
-        const query = searchInput.value.toLowerCase();
+        const query = normalizeText(searchInput ? searchInput.value : '');
+        const filterValue = filterSelect ? filterSelect.value : 'all';
+        let selectedGenre = 'all';
+        let availableOnly = false;
+        let sortByRating = false;
 
-        // タイトルで部分一致検索
-        const filtered = games.filter(game =>
-            game.title.toLowerCase().includes(query)
-        );
+        if (filterValue === 'sort:rating') {
+            sortByRating = true;
+        } else if (filterValue === 'filter:available') {
+            availableOnly = true;
+        } else if (filterValue.startsWith('genre:')) {
+            selectedGenre = filterValue.slice('genre:'.length);
+        }
 
+        let filtered = games.slice();
+
+        if (query) {
+            filtered = filtered.filter(game => {
+                const title = normalizeText(game.title);
+                const genre = normalizeText(game.genre);
+                return title.includes(query) || genre.includes(query);
+            });
+        }
+
+        if (selectedGenre !== 'all') {
+            filtered = filtered.filter(game => {
+                const tokens = splitGenres(game.genre).map(item => item.key);
+                return tokens.includes(selectedGenre);
+            });
+        }
+
+        if (availableOnly) {
+            filtered = filtered.filter(game => isAvailable(game));
+        }
+
+        if (sortByRating) {
+            filtered.sort((a, b) => {
+                const ratingA = Number(a.rating);
+                const ratingB = Number(b.rating);
+                const safeA = Number.isFinite(ratingA) ? ratingA : 0;
+                const safeB = Number.isFinite(ratingB) ? ratingB : 0;
+                if (safeB !== safeA) return safeB - safeA;
+                return String(a.title || '').localeCompare(String(b.title || ''), 'ja');
+            });
+        }
+
+        updateFilterActiveState();
         renderGames(filtered);
     }
 
@@ -119,27 +257,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== 検索ボタン処理 =====
     if (searchBtn) {
-        searchBtn.addEventListener('click', filterGames);
+        searchBtn.addEventListener('click', applyFilters);
     }
 
     // Enterキーで検索
     if (searchInput) {
         searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') filterGames();
+            if (e.key === 'Enter') applyFilters();
         });
     }
 
-    // ===== フィルターチップ処理（UIのみ） =====
-    if (filterChips) {
-        filterChips.forEach(chip => {
-            chip.addEventListener('click', function () {
-                // 全チップのactive解除
-                filterChips.forEach(c => c.classList.remove('active'));
-                // クリックしたチップをactiveに
-                this.classList.add('active');
-
-                // ※ ジャンルなどで絞り込む場合はここに実装
-            });
+    // ===== フィルターUI =====
+    if (filterSelect) {
+        filterSelect.addEventListener('change', () => {
+            updateFilterActiveState();
+            applyFilters();
         });
     }
 

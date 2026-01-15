@@ -1,18 +1,23 @@
 <?php
 require_once __DIR__ . '/admin_check.php';
 
+$genreOptions = require __DIR__ . '/genre_list.php';
+
 $errors = [];
 $messages = [];
-$formValues = [
+$defaultFormValues = [
     'title' => '',
     'description' => '',
-    'genre' => '',
+    'genre' => [],
     'min_players' => '',
     'max_players' => '',
     'difficulty' => '',
     'play_time' => '',
     'image_url' => '',
 ];
+$formValues = $defaultFormValues;
+$editingGameId = null;
+$isEditing = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -20,15 +25,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!verify_csrf_token($token)) {
         $errors[] = 'CSRFトークンが無効です。ページを更新してもう一度お試しください。';
-    } elseif ($action === 'create') {
+    } elseif ($action === 'create' || $action === 'update') {
+        $isEditing = ($action === 'update');
+        if ($isEditing) {
+            $editingGameId = (int)($_POST['game_id'] ?? 0);
+            if ($editingGameId <= 0) {
+                $errors[] = '不正なゲームIDです。';
+            }
+        }
+
         $formValues['title'] = trim((string)($_POST['title'] ?? ''));
         $formValues['description'] = trim((string)($_POST['description'] ?? ''));
-        $formValues['genre'] = trim((string)($_POST['genre'] ?? ''));
+        $genreInput = $_POST['genre'] ?? [];
+        $selectedGenres = is_array($genreInput) ? $genreInput : [$genreInput];
+        $selectedGenres = array_values(array_filter(array_map('trim', $selectedGenres), 'strlen'));
+        $invalidGenres = array_diff($selectedGenres, $genreOptions);
+        if (!empty($invalidGenres)) {
+            $errors[] = 'ジャンルの選択が不正です。';
+        }
+        $selectedGenres = array_values(array_unique(array_intersect($selectedGenres, $genreOptions)));
+        $formValues['genre'] = $selectedGenres;
         $formValues['min_players'] = trim((string)($_POST['min_players'] ?? ''));
         $formValues['max_players'] = trim((string)($_POST['max_players'] ?? ''));
         $formValues['difficulty'] = trim((string)($_POST['difficulty'] ?? ''));
         $formValues['play_time'] = trim((string)($_POST['play_time'] ?? ''));
         $formValues['image_url'] = trim((string)($_POST['image_url'] ?? ''));
+        $genreValue = $selectedGenres ? implode(' / ', $selectedGenres) : '';
 
         if ($formValues['title'] === '') {
             $errors[] = 'タイトルを入力してください。';
@@ -85,24 +107,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($errors)) {
             try {
-                $stmt = $pdo->prepare(
-                    'INSERT INTO games (title, description, genre, min_players, max_players, difficulty, play_time, image_url)
-                     VALUES (:title, :description, :genre, :min_players, :max_players, :difficulty, :play_time, :image_url)'
-                );
-                $stmt->execute([
-                    ':title' => $formValues['title'],
-                    ':description' => $formValues['description'] ?: null,
-                    ':genre' => $formValues['genre'] ?: null,
-                    ':min_players' => $minPlayers,
-                    ':max_players' => $maxPlayers,
-                    ':difficulty' => $formValues['difficulty'] ?: null,
-                    ':play_time' => $formValues['play_time'] ?: null,
-                    ':image_url' => $imageUrl,
-                ]);
-                $messages[] = 'ゲームを追加しました。';
-                $formValues = array_fill_keys(array_keys($formValues), '');
+                if ($isEditing) {
+                    $existsStmt = $pdo->prepare('SELECT COUNT(*) FROM games WHERE id = :id');
+                    $existsStmt->execute([':id' => $editingGameId]);
+                    if ((int)$existsStmt->fetchColumn() === 0) {
+                        $errors[] = '更新対象のゲームが見つかりませんでした。';
+                    }
+                }
             } catch (PDOException $e) {
-                $errors[] = 'ゲームの追加に失敗しました。';
+                $errors[] = '更新対象の確認に失敗しました。';
+            }
+        }
+
+        if (empty($errors)) {
+            try {
+                if ($isEditing) {
+                    $stmt = $pdo->prepare(
+                        'UPDATE games
+                         SET title = :title,
+                             description = :description,
+                             genre = :genre,
+                             min_players = :min_players,
+                             max_players = :max_players,
+                             difficulty = :difficulty,
+                             play_time = :play_time,
+                             image_url = :image_url
+                         WHERE id = :id'
+                    );
+                    $stmt->execute([
+                        ':title' => $formValues['title'],
+                        ':description' => $formValues['description'] ?: null,
+                        ':genre' => $genreValue ?: null,
+                        ':min_players' => $minPlayers,
+                        ':max_players' => $maxPlayers,
+                        ':difficulty' => $formValues['difficulty'] ?: null,
+                        ':play_time' => $formValues['play_time'] ?: null,
+                        ':image_url' => $imageUrl,
+                        ':id' => $editingGameId,
+                    ]);
+                    $messages[] = 'ゲームを更新しました。';
+                } else {
+                    $stmt = $pdo->prepare(
+                        'INSERT INTO games (title, description, genre, min_players, max_players, difficulty, play_time, image_url)
+                         VALUES (:title, :description, :genre, :min_players, :max_players, :difficulty, :play_time, :image_url)'
+                    );
+                    $stmt->execute([
+                        ':title' => $formValues['title'],
+                        ':description' => $formValues['description'] ?: null,
+                        ':genre' => $genreValue ?: null,
+                        ':min_players' => $minPlayers,
+                        ':max_players' => $maxPlayers,
+                        ':difficulty' => $formValues['difficulty'] ?: null,
+                        ':play_time' => $formValues['play_time'] ?: null,
+                        ':image_url' => $imageUrl,
+                    ]);
+                    $messages[] = 'ゲームを追加しました。';
+                }
+                $formValues = $defaultFormValues;
+                $editingGameId = null;
+                $isEditing = false;
+            } catch (PDOException $e) {
+                $errors[] = $isEditing ? 'ゲームの更新に失敗しました。' : 'ゲームの追加に失敗しました。';
             }
         }
     } elseif ($action === 'delete') {
@@ -124,6 +189,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } else {
         $errors[] = '不正な操作です。';
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_GET['edit'])) {
+    $editingGameId = (int)($_GET['edit'] ?? 0);
+    if ($editingGameId <= 0) {
+        $errors[] = '不正なゲームIDです。';
+    } else {
+        try {
+            $stmt = $pdo->prepare(
+                'SELECT id, title, description, genre, min_players, max_players, difficulty, play_time, image_url
+                 FROM games
+                 WHERE id = :id'
+            );
+            $stmt->execute([':id' => $editingGameId]);
+            $editingGame = $stmt->fetch();
+            if ($editingGame) {
+                $rawGenres = array_filter(
+                    array_map('trim', preg_split('/[\/／,，・]/', (string)($editingGame['genre'] ?? ''))),
+                    'strlen'
+                );
+                $formValues = [
+                    'title' => $editingGame['title'] ?? '',
+                    'description' => $editingGame['description'] ?? '',
+                    'genre' => array_values(array_unique($rawGenres)),
+                    'min_players' => $editingGame['min_players'] ?? '',
+                    'max_players' => $editingGame['max_players'] ?? '',
+                    'difficulty' => $editingGame['difficulty'] ?? '',
+                    'play_time' => $editingGame['play_time'] ?? '',
+                    'image_url' => $editingGame['image_url'] ?? '',
+                ];
+                $isEditing = true;
+            } else {
+                $errors[] = '編集対象のゲームが見つかりませんでした。';
+                $editingGameId = null;
+            }
+        } catch (PDOException $e) {
+            $errors[] = '編集対象の取得に失敗しました。';
+            $editingGameId = null;
+        }
     }
 }
 
@@ -190,11 +295,14 @@ try {
             <?php endif; ?>
 
             <section class="card">
-                <h2 class="section-heading">ゲームを追加</h2>
+                <h2 class="section-heading"><?php echo $isEditing ? 'ゲームを編集' : 'ゲームを追加'; ?></h2>
                 <form method="post" class="game-form" novalidate>
                     <input type="hidden" name="csrf_token"
                         value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
-                    <input type="hidden" name="action" value="create">
+                    <input type="hidden" name="action" value="<?php echo $isEditing ? 'update' : 'create'; ?>">
+                    <?php if ($isEditing && $editingGameId): ?>
+                        <input type="hidden" name="game_id" value="<?php echo (int)$editingGameId; ?>">
+                    <?php endif; ?>
 
                     <div class="form-grid">
                         <div class="form-field">
@@ -203,10 +311,25 @@ try {
                                 value="<?php echo htmlspecialchars($formValues['title'], ENT_QUOTES, 'UTF-8'); ?>">
                         </div>
 
-                        <div class="form-field">
-                            <label for="genre">ジャンル</label>
-                            <input type="text" id="genre" name="genre"
-                                value="<?php echo htmlspecialchars($formValues['genre'], ENT_QUOTES, 'UTF-8'); ?>">
+                        <div class="form-field form-field-full">
+                            <label>ジャンル</label>
+                            <?php
+                                $selectedGenres = $formValues['genre'] ?? [];
+                                if (!is_array($selectedGenres)) {
+                                    $selectedGenres = array_filter(
+                                        array_map('trim', preg_split('/[\/／,，・]/', (string)$selectedGenres))
+                                    );
+                                }
+                            ?>
+                            <div class="genre-options">
+                                <?php foreach ($genreOptions as $genreOption): ?>
+                                    <label class="genre-option">
+                                        <input type="checkbox" name="genre[]" value="<?php echo htmlspecialchars($genreOption, ENT_QUOTES, 'UTF-8'); ?>"
+                                            <?php echo in_array($genreOption, $selectedGenres, true) ? ' checked' : ''; ?>>
+                                        <span><?php echo htmlspecialchars($genreOption, ENT_QUOTES, 'UTF-8'); ?></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
 
                         <div class="form-field">
@@ -246,7 +369,10 @@ try {
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn-primary">追加する</button>
+                        <button type="submit" class="btn-primary"><?php echo $isEditing ? '更新する' : '追加する'; ?></button>
+                        <?php if ($isEditing): ?>
+                            <a href="game_admin.php" class="btn-secondary">キャンセル</a>
+                        <?php endif; ?>
                     </div>
                 </form>
             </section>
@@ -301,14 +427,17 @@ try {
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <form method="post" onsubmit="return confirm('このゲームを削除しますか？');">
-                                                <input type="hidden" name="csrf_token"
-                                                    value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
-                                                <input type="hidden" name="action" value="delete">
-                                                <input type="hidden" name="game_id"
-                                                    value="<?php echo (int)$game['id']; ?>">
-                                                <button type="submit" class="btn-danger">削除</button>
-                                            </form>
+                                            <div class="table-actions">
+                                                <a href="game_admin.php?edit=<?php echo (int)$game['id']; ?>" class="btn-secondary">編集</a>
+                                                <form method="post" onsubmit="return confirm('このゲームを削除しますか？');">
+                                                    <input type="hidden" name="csrf_token"
+                                                        value="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <input type="hidden" name="game_id"
+                                                        value="<?php echo (int)$game['id']; ?>">
+                                                    <button type="submit" class="btn-danger">削除</button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

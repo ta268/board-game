@@ -137,6 +137,30 @@
     vertical-align: middle;
 }
 
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.status-reserved {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.status-cancelled {
+    background-color: #999;
+    color: #fff;
+}
+
+.status-other {
+    background-color: #bdc3c7;
+    color: #333;
+}
+
 /* Responsive Table */
 @media (max-width: 768px) {
     .reservation-list-container {

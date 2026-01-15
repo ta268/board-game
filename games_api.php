@@ -20,7 +20,16 @@ if (isset($_GET['id'])) {
         $stmt = $pdo->prepare(
             'SELECT g.id, g.title, g.description, g.genre, g.min_players, g.max_players, g.difficulty, g.play_time,
                     g.image_url, g.created_at, g.updated_at,
-                    COALESCE(ROUND((SELECT AVG(r.rating) FROM reviews r WHERE r.game_id = g.id), 1), 0) AS rating
+                    COALESCE(ROUND((SELECT AVG(r.rating) FROM reviews r WHERE r.game_id = g.id), 1), 0) AS rating,
+                    CASE
+                        WHEN EXISTS (
+                            SELECT 1 FROM lendings l
+                            WHERE l.game_id = g.id
+                              AND l.status = \'lending\'
+                              AND l.returned_date IS NULL
+                        ) THEN 0
+                        ELSE 1
+                    END AS is_available
              FROM games g
              WHERE g.id = :id'
         );
@@ -40,7 +49,16 @@ try {
     $stmt = $pdo->query(
         'SELECT g.id, g.title, g.description, g.genre, g.min_players, g.max_players, g.difficulty, g.play_time,
                 g.image_url, g.created_at, g.updated_at,
-                COALESCE(ROUND((SELECT AVG(r.rating) FROM reviews r WHERE r.game_id = g.id), 1), 0) AS rating
+                COALESCE(ROUND((SELECT AVG(r.rating) FROM reviews r WHERE r.game_id = g.id), 1), 0) AS rating,
+                CASE
+                    WHEN EXISTS (
+                        SELECT 1 FROM lendings l
+                        WHERE l.game_id = g.id
+                          AND l.status = \'lending\'
+                          AND l.returned_date IS NULL
+                    ) THEN 0
+                    ELSE 1
+                END AS is_available
          FROM games g
          ORDER BY g.created_at DESC'
     );

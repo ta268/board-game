@@ -50,7 +50,8 @@
 }
 
 .form-field input,
-.form-field textarea {
+.form-field textarea,
+.form-field select {
     padding: 8px 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -62,9 +63,29 @@
     resize: vertical;
 }
 
+.genre-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+}
+
+.genre-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.genre-option input {
+    margin: 0;
+}
+
 .form-actions {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
     margin-top: 16px;
 }
 
@@ -82,6 +103,23 @@
     opacity: 0.9;
 }
 
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 10px 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.85rem;
+}
+
+.btn-secondary:hover {
+    background-color: #e6e6e6;
+}
+
 .btn-danger {
     background-color: #e74c3c;
     color: var(--white);
@@ -95,6 +133,21 @@
 
 .btn-danger:hover {
     background-color: #c0392b;
+}
+
+.table-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.table-actions form {
+    margin: 0;
+}
+
+.table-actions .btn-secondary {
+    padding: 6px 14px;
 }
 
 .alert {

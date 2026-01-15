@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
+
+$genreOptions = require __DIR__ . '/genre_list.php';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -66,9 +68,9 @@ if (!isset($_SESSION['user_id'])) {
             </div>
 
             <div class="filter-section">
-                <button class="filter-chip active">★ 評価順</button>
-                <button class="filter-chip">貸出可能のみ</button>
-                <button class="filter-chip">すべてのジャンル</button>
+                <select class="filter-chip filter-select" id="game-filter" aria-label="絞り込み">
+                    <option value="all">すべてのジャンル</option>
+                </select>
             </div>
 
             <div class="game-list-grid" id="game-list">
@@ -89,6 +91,9 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </footer>
 
+    <script>
+        window.GAME_GENRES = <?php echo json_encode($genreOptions, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+    </script>
     <script src="script/game.js"></script>
 </body>
 
