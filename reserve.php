@@ -66,11 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             // 同一ユーザー・同一ゲーム・同一日付の重複チェック
-            $dupStmt = $pdo->prepare('SELECT COUNT(*) FROM reservations WHERE user_id = :uid AND game_id = :gid AND reservation_date = :rdate AND status != "cancelled"');
+            $dupStmt = $pdo->prepare('SELECT COUNT(*) FROM reservations WHERE user_id = :uid AND game_id = :gid AND reservation_date = :rdate AND status = :status');
             $dupStmt->execute([
                 ':uid' => $userId,
                 ':gid' => $gameId,
                 ':rdate' => $dateInput,
+                ':status' => 'reserved',
             ]);
             $dupCount = (int) $dupStmt->fetchColumn();
             if ($dupCount > 0) {
