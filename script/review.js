@@ -75,6 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const currentUserId = window.CURRENT_USER_ID || 0;
+
         // 各レビューをDOMとして生成
         list.forEach(r => {
             const item = document.createElement('div');
@@ -88,12 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 Math.max(1, Math.min(5, parseInt(r.rating, 10) || 0))
             );
 
+            // 削除ボタン (自分のレビューのみ表示)
+            let deleteBtnHtml = '';
+            if (currentUserId > 0 && parseInt(r.user_id, 10) === currentUserId) {
+                deleteBtnHtml = `<button class="delete-review-btn" data-id="${r.id}" style="margin-left: 10px; color: red; cursor: pointer; border: none; background: none;">[削除]</button>`;
+            }
+
             // レビューHTML
             item.innerHTML = `
                 <div class="review-header">
                     <span class="review-author">${safeName}</span>
                     <span class="review-stars">${stars}</span>
                     <span class="review-date">${r.created_at || ''}</span>
+                    ${deleteBtnHtml}
                 </div>
                 <p class="review-text"></p>
             `;
@@ -101,8 +110,50 @@ document.addEventListener('DOMContentLoaded', () => {
             // コメント本文（XSS対策で textContent 使用）
             item.querySelector('.review-text').textContent = r.comment || '';
 
+            // 削除ボタンのイベントリスナー
+            const delBtn = item.querySelector('.delete-review-btn');
+            if (delBtn) {
+                delBtn.addEventListener('click', () => deleteReview(r.id));
+            }
+
             reviewsList.appendChild(item);
         });
+    }
+
+    // ===== レビュー削除処理 =====
+    async function deleteReview(reviewId) {
+        if (!confirm('このレビューを削除してもよろしいですか？')) return;
+
+        const token = initialCsrfToken || getCsrfToken();
+        if (!token) {
+            alert('CSRFトークンを取得できませんでした');
+            return;
+        }
+
+        try {
+            const form = new FormData();
+            form.append('action', 'delete');
+            form.append('review_id', reviewId);
+            form.append('csrf_token', token);
+
+            const res = await fetch('reviews_api.php', {
+                method: 'POST',
+                body: form,
+                headers: {
+                    'X-CSRF-Token': token
+                }
+            });
+
+            const data = await res.json();
+            if (!data.ok) {
+                throw new Error(data.error || '削除に失敗しました');
+            }
+
+            alert('レビューを削除しました');
+            loadReviews(); // 一覧を再読み込み
+        } catch (err) {
+            alert(err.message);
+        }
     }
 
     // ===== レビュー投稿処理 =====

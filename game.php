@@ -94,6 +94,7 @@ $genreOptions = require __DIR__ . '/genre_list.php';
 
     <script>
         window.GAME_GENRES = <?php echo json_encode($genreOptions, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+        window.CURRENT_USER_ID = <?php echo isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0; ?>;
     </script>
     <script src="script/game.js"></script>
 </body>
