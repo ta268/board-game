@@ -97,10 +97,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><input type="text" name="nickname" id="nickname" value="<?php echo htmlspecialchars($nickname ?? '', ENT_QUOTES, 'UTF-8'); ?>"></p>
 
     <p><label for="email">メールアドレス</label></p>
-    <p><input type="text" name="email" id="email" value="<?php echo htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8'); ?>"></p>
+    <p><input type="text" name="email" id="email" value="<?php echo htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8'); ?>" autocomplete="off"></p>
 
                 <p><label for="password">パスワード</label></p>
-                <p><input type="password" name="password" id="password"></p>
+                <p><input type="password" name="password" id="password" autocomplete="off"></p>
 
                 <p><label for="password_confirm">パスワード確認</label></p>
                 <p><input type="password" name="password_confirm" id="password_confirm"></p>
