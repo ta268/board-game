@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const currentUserId = window.CURRENT_USER_ID || 0;
-        console.log('Current User ID:', currentUserId);
 
         // 各レビューをDOMとして生成
         list.forEach(r => {
@@ -85,8 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // ユーザー名（未設定時は「ユーザー」）
             const safeName = r.user_name || 'ユーザー';
-
-            console.log('Review:', r.id, 'User:', r.user_id, 'Rating:', r.rating);
 
             // 星評価（1〜5の範囲に制限）
             const stars = '★'.repeat(
