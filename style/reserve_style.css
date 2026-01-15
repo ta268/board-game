@@ -193,3 +193,14 @@ footer {
     color: #1a346e;
     text-decoration: none;
 }
+
+.error ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.error li {
+  margin: 0;
+  padding: 0;
+}
