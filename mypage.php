@@ -146,8 +146,8 @@ try {
                                         <?php if ($res['status'] === 'reserved'): ?>
                                             <span class="status-badge status-reserved">予約中</span>
                                         <?php elseif ($res['status'] === 'cancelled'): ?>
-                                            <span class="status-badge status-returned" style="background-color:#999;">キャンセル済</span>
-                                        <?php else: ?>
+                                            <span class="status-badge status-cancelled">キャンセル済</span>
+                                        <?php elseif ($res['status'] === 'returned'): ?>
                                             <span class="status-badge status-returned">返却済</span>
                                         <?php endif; ?>
                                     </td>

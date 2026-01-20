@@ -161,9 +161,30 @@
     color: #333;
 }
 
+.status-returned {
+    background-color: #3498db;
+    color: #fff;
+}
+
 /* Responsive Table */
 @media (max-width: 768px) {
     .reservation-list-container {
         overflow-x: auto;
     }
+}
+
+.btn-return {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-return:hover {
+    background-color: #e67e22;
 }

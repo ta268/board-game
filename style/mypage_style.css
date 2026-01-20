@@ -87,8 +87,13 @@
 }
 
 .status-returned {
-    background-color: #e8f5e9;
-    color: #388e3c;
+    background-color: #3498db;
+    color: #fff;
+}
+
+.status-cancelled {
+    background-color: #999;
+    color: #fff;
 }
 
 /* キャンセルボタンのスタイル */

@@ -1,5 +1,39 @@
 <?php
 require_once __DIR__ . '/admin_check.php';
+// POSTリクエスト処理 (ステータス更新)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=UTF-8');
+    
+    // CSRFチェック
+    $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verify_csrf_token($token)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid CSRF token']);
+        exit;
+    }
+
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
+    $id = (int)($data['id'] ?? 0);
+    $action = $data['action'] ?? '';
+
+    if ($id > 0 && $action === 'return') {
+        try {
+            $stmt = $pdo->prepare("UPDATE reservations SET status = 'returned' WHERE id = :id");
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            echo json_encode(['success' => true]);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Database error']);
+        }
+    } else {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid parameters']);
+    }
+    exit;
+}
+
 $gameTitles = [];
 try {
     $stmt = $pdo->query('SELECT DISTINCT title FROM games ORDER BY title ASC');
@@ -14,7 +48,7 @@ $reservationRows = [];
 $reservationData = [];
 try {
     $stmt = $pdo->query("
-        SELECT r.reservation_date, r.party_size, r.status, u.name AS user_name, g.title AS game_title
+        SELECT r.id, r.reservation_date, r.party_size, r.status, u.name AS user_name, g.title AS game_title
         FROM reservations r
         JOIN users u ON r.user_id = u.id
         JOIN games g ON r.game_id = g.id
@@ -27,6 +61,7 @@ try {
 
 foreach ($reservationRows as $row) {
     $reservationData[] = [
+        'id' => (int)$row['id'],
         'date' => $row['reservation_date'],
         'name' => $row['user_name'],
         'game' => $row['game_title'],
@@ -95,6 +130,7 @@ foreach ($reservationRows as $row) {
                             <th>ゲーム</th>
                             <th>人数</th>
                             <th>ステータス</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody id="reservation-list">
@@ -114,6 +150,7 @@ foreach ($reservationRows as $row) {
 
     <script>
         const reservations = <?php echo json_encode($reservationData, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+        const csrfToken = "<?php echo csrf_token(); ?>"; // CSRFトークンの埋め込み
 
         let currentTab = 'future'; // 'future' or 'past'
 
@@ -124,14 +161,57 @@ foreach ($reservationRows as $row) {
             if (status === 'cancelled') {
                 return { label: 'キャンセル', className: 'status-cancelled' };
             }
+            if (status === 'returned') {
+                return { label: '返却済み', className: 'status-returned' };
+            }
             return { label: '不明', className: 'status-other' };
+        }
+
+        async function confirmReturn(id) {
+            if (!confirm('ステータスを「返却済み」に変更しますか？')) {
+                return;
+            }
+
+            try {
+                // CSRFトークンをmetaタグなどから取得するか、init.phpの仕組みに合わせる
+                // 今回は簡単のため、PHP側で検証している HTTP_X_CSRF_TOKEN ヘッダを送る必要があるが
+                // init.phpでセットされている $_SESSION['__csrf_token'] をJSに渡していないため
+                // 簡易的に実装済みPHPロジックに合わせて実装するが、tokenが必要。
+                // 既存コードにないので、今回は fetch 時にヘッダ付与を試みるが、
+                // トークンがJS変数にないため、一旦スキップするか、PHP側で埋め込む必要がある。
+                // 今回はPHP側で $_SESSION チェックしているので、tokenをJSに渡す修正も必要だが
+                // 先にここを実装してしまう。
+                
+                const response = await fetch('reserve_admin.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken // トークン付与
+                    },
+                    body: JSON.stringify({ id: id, action: 'return' })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('返却済みに変更しました。');
+                        location.reload();
+                    } else {
+                        alert('エラーが発生しました: ' + (result.error || '不明なエラー'));
+                    }
+                } else {
+                    const errorText = await response.text();
+                    alert('通信エラーが発生しました。Status: ' + response.status + '\n' + errorText);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('エラーが発生しました: ' + e.message);
+            }
         }
 
         function switchTab(tabName) {
             currentTab = tabName;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            // クリックされたボタンにactiveをつける (テキスト内容で判定するか、引数で渡すか。今回は簡易的にindexやeventから判定もできるが、明示的にクラス操作する)
-            // event.targetが使えない呼び出しもあるため、tabNameで判定してDOM取得推奨だが、今回はonclick="switchTab"なのでevent.targetでOK
             if(event) event.target.classList.add('active');
 
             renderReservations();
@@ -162,8 +242,6 @@ foreach ($reservationRows as $row) {
             });
 
             // ソート
-            // 今後の予約: 日付が近い順 (昇順)
-            // 過去の予約: 日付が近い順 (降順 = 新しい順)
             filtered.sort((a, b) => {
                 if (currentTab === 'future') {
                     return a.date.localeCompare(b.date);
@@ -188,12 +266,19 @@ foreach ($reservationRows as $row) {
                     const statusInfo = getStatusInfo(r.status);
                     const partySize = (r.party_size === null || r.party_size === undefined) ? '-' : r.party_size;
 
+                    // 操作ボタン生成
+                    let actionHtml = '';
+                    if (r.status === 'reserved') {
+                       actionHtml = `<button class="btn-return" onclick="confirmReturn(${r.id})">返却</button>`;
+                    }
+
                     tr.innerHTML = `
                         <td>${dateDisplay}</td>
                         <td>${r.name}</td>
                         <td>${r.game}</td>
                         <td>${partySize}</td>
                         <td><span class="status-badge ${statusInfo.className}">${statusInfo.label}</span></td>
+                        <td>${actionHtml}</td>
                     `;
                     listBody.appendChild(tr);
                 });
