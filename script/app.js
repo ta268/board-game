@@ -64,8 +64,73 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ===== ランキング表示エリア =====
+    const rankingContainer = document.getElementById('ranking-list');
+
+    // ===== ランキングをAPIから取得 =====
+    async function loadRanking() {
+        if (!rankingContainer) return;
+
+        try {
+            // 人気順・3件取得
+            const res = await fetch('games_api.php?sort=rating&limit=3');
+            const data = await res.json();
+
+            if (!data.ok || !Array.isArray(data.games)) {
+                throw new Error(data.error || 'ランキング取得に失敗しました');
+            }
+
+            renderRanking(data.games);
+        } catch (err) {
+            rankingContainer.innerHTML = `<p style="text-align: center;">${err.message}</p>`;
+        }
+    }
+
+    // ===== ランキング描画 =====
+    function renderRanking(games) {
+        if (games.length === 0) {
+            rankingContainer.innerHTML = '<p style="text-align: center;">データがありません。</p>';
+            return;
+        }
+
+        rankingContainer.innerHTML = '';
+        const badges = ['🥇', '🥈', '🥉'];
+
+        games.forEach((game, index) => {
+            const card = document.createElement('div');
+            card.className = 'ranking-card';
+
+            // 1位～3位のバッジ
+            const badge = badges[index] || (index + 1) + '位';
+            const rankClass = `rank-${index + 1}`;
+
+            const imgSrc = game.image_url || '';
+            const placeholder = 'https://placehold.co/300x200?text=' + encodeURIComponent(game.title);
+
+            // ★の表示生成
+            const rating = Number(game.rating || 0).toFixed(1);
+
+            card.innerHTML = `
+                <div class="rank-badge ${rankClass}">${badge}</div>
+                <a href="game-details.php?id=${game.id}" class="ranking-link">
+                    <div class="ranking-img-wrapper">
+                        <img src="${imgSrc}" alt="${game.title}" 
+                             onerror="this.src='${placeholder}'">
+                    </div>
+                    <div class="ranking-info">
+                        <h3 class="ranking-title">${game.title}</h3>
+                        <div class="ranking-rating">★ ${rating}</div>
+                    </div>
+                </a>
+            `;
+
+            rankingContainer.appendChild(card);
+        });
+    }
+
     // ===== 初期ロード =====
     loadGames();
+    loadRanking();
 
     // ===== ページ内リンクのスムーススクロール =====
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
