@@ -28,7 +28,8 @@ try {
     <!-- タイトル -->
 
     <!-- 外部CSS読み込み -->
-    <link rel="stylesheet" href="style/home.css">
+    <link rel="stylesheet" href="style/home.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="style/ranking.css?v=<?php echo time(); ?>">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -119,6 +120,18 @@ try {
             </div>
         </section>
 
+        <!-- 人気ランキング表示 -->
+        <section class="ranking-section">
+            <div class="container">
+                <h2 class="section-title">
+                    <span style="display:inline-block; transform: scale(1.2);">👑</span> 人気ゲームランキング
+                </h2>
+                <div class="ranking-grid" id="ranking-list">
+                    <p style="text-align: center; width:100%;">読み込み中...</p>
+                </div>
+            </div>
+        </section>
+
         <!-- 新着ゲーム表示 -->
         <section class="new-games">
             <div class="container">
@@ -165,7 +178,7 @@ try {
     </footer>
 
     <!-- JavaScript読み込み -->
-    <script src="script/app.js"></script>
+    <script src="script/app.js?v=<?php echo time(); ?>"></script>
 </body>
 
 </html>

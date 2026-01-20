@@ -47,8 +47,8 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>マイページ - Board Game Cafe</title>
-    <link rel="stylesheet" href="style/game.css">
-    <link rel="stylesheet" href="style/mypage_style.css">
+    <link rel="stylesheet" href="style/game.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="style/mypage_style.css?v=<?php echo time(); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -108,6 +108,7 @@ try {
                     <thead>
                         <tr>
                             <th>予約日</th>
+                            <th>取り置き期限</th>
                             <th>ゲームタイトル</th>
                             <th>状況</th>
                             <th>操作</th>
@@ -117,12 +118,29 @@ try {
                     <tbody>
                         <?php if (count($reservations) === 0): ?>
                             <tr>
-                                <td colspan="4" style="text-align:center;">予約履歴はありません。</td>
+                                <td colspan="5" style="text-align:center;">予約履歴はありません。</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($reservations as $res): ?>
+                                <?php
+                                // 期限 = 予約日 + 7日
+                                $deadline = date('Y-m-d', strtotime($res['reservation_date'] . ' + 7 days'));
+
+                                // 期限切れ判定（今日 > 期限日）
+                                $is_expired = (date('Y-m-d') > $deadline);
+
+                                // 表示用スタイル
+                                $deadline_style = $is_expired ? 'color: red; font-weight: bold;' : '';
+                                $deadline_text = str_replace('-', '/', $deadline);
+                                if ($is_expired) {
+                                    $deadline_text .= ' <br><span style="font-size:0.8em;">(期限切れ)</span>';
+                                }
+                                ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars(str_replace('-', '/', $res['reservation_date'])); ?></td>
+                                    <td style="<?php echo $deadline_style; ?>">
+                                        <?php echo $deadline_text; ?>
+                                    </td>
                                     <td><?php echo htmlspecialchars($res['game_title']); ?></td>
                                     <td>
                                         <?php if ($res['status'] === 'reserved'): ?>

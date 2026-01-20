@@ -136,7 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </ul>
             </div>
         <?php elseif ($success !== ''): ?>
-            <p class="success"><?php echo htmlspecialchars($success, ENT_QUOTES, 'UTF-8'); ?></p>
+            <div class="message-box success">
+                <span class="message-icon">✅</span>
+                <span class="message-text"><?php echo htmlspecialchars($success, ENT_QUOTES, 'UTF-8'); ?></span>
+            </div>
         <?php endif; ?>
 
         <div class="reserve_form">

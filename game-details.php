@@ -127,6 +127,9 @@ require_once __DIR__ . '/auth_check.php';
         </div>
     </footer>
 
+    <script>
+        window.CURRENT_USER_ID = <?php echo isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0; ?>;
+    </script>
     <script src="script/game-details.js"></script>
     <script src="script/review.js"></script>
 </body>

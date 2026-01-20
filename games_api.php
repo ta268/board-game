@@ -12,7 +12,7 @@ function respond($ok, $payload = [], $code = 200)
 
 // 詳細取得
 if (isset($_GET['id'])) {
-    $id = (int)$_GET['id'];
+    $id = (int) $_GET['id'];
     if ($id <= 0) {
         respond(false, ['error' => '不正なIDです'], 400);
     }
@@ -46,22 +46,38 @@ if (isset($_GET['id'])) {
 
 // 一覧取得
 try {
-    $stmt = $pdo->query(
-        'SELECT g.id, g.title, g.description, g.genre, g.min_players, g.max_players, g.difficulty, g.play_time,
+    // パラメータ取得
+    $sort = $_GET['sort'] ?? 'newest';
+    $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 0;
+
+    // ソート条件
+    $orderBy = 'g.created_at DESC';
+    if ($sort === 'rating') {
+        $orderBy = 'rating DESC, g.created_at DESC';
+    }
+
+    // LIMIT句
+    $limitClause = '';
+    if ($limit > 0) {
+        $limitClause = ' LIMIT ' . $limit;
+    }
+
+    $sql = "SELECT g.id, g.title, g.description, g.genre, g.min_players, g.max_players, g.difficulty, g.play_time,
                 g.image_url, g.created_at, g.updated_at,
                 COALESCE(ROUND((SELECT AVG(r.rating) FROM reviews r WHERE r.game_id = g.id), 1), 0) AS rating,
                 CASE
                     WHEN EXISTS (
                         SELECT 1 FROM lendings l
                         WHERE l.game_id = g.id
-                          AND l.status = \'lending\'
+                          AND l.status = 'lending'
                           AND l.returned_date IS NULL
                     ) THEN 0
                     ELSE 1
                 END AS is_available
          FROM games g
-         ORDER BY g.created_at DESC'
-    );
+         ORDER BY $orderBy" . $limitClause;
+
+    $stmt = $pdo->query($sql);
     $games = $stmt->fetchAll();
     respond(true, ['games' => $games]);
 } catch (PDOException $e) {

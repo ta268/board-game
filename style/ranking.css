@@ -1,0 +1,110 @@
+/* Ranking Section */
+.ranking-section {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+}
+
+.ranking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    justify-content: center;
+}
+
+.ranking-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.ranking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.rank-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #333;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Rank Colors */
+.rank-badge.rank-1 {
+    background: linear-gradient(135deg, #FFD700, #FDB931);
+    border: 2px solid #fff;
+}
+
+.rank-badge.rank-2 {
+    background: linear-gradient(135deg, #E0E0E0, #BDBDBD);
+    border: 2px solid #fff;
+}
+
+.rank-badge.rank-3 {
+    background: linear-gradient(135deg, #CD7F32, #A0522D);
+    border: 2px solid #fff;
+}
+
+.ranking-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.ranking-img-wrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.ranking-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.ranking-card:hover .ranking-img-wrapper img {
+    transform: scale(1.05);
+}
+
+.ranking-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.ranking-title {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: bold;
+}
+
+.ranking-rating {
+    color: #ffb400;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ranking-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
