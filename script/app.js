@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const badge = badges[index] || (index + 1) + '位';
             const rankClass = `rank-${index + 1}`;
 
-            const imgSrc = game.image_url || '';
+            const imgSrc = getPrimaryImage(game.image_url);
             const placeholder = 'https://placehold.co/300x200?text=' + encodeURIComponent(game.title);
 
             // ★の表示生成
